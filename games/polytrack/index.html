@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestrium Online | PolyTrack</title>
+    <link rel="icon" type="image/png" href="favicon.png?login.live.com">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Menu Container */
+        #launcher-ui {
+            text-align: center;
+            z-index: 10;
+            transition: opacity 0.5s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        p {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .launcher-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            padding: 2rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 200px;
+        }
+
+        .launcher-btn:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.2);
+        }
+
+        .launcher-btn span {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .launcher-btn small {
+            color: var(--accent-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* Game Iframe Styles */
+        #game-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            background: #000;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover { background: rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body>
+
+    <div id="launcher-ui">
+        <h1>PolyTrack</h1>
+        <p>Choose your PolyTrack experience</p>
+        
+        <div class="button-group">
+            <button class="launcher-btn" onclick="launchGame('./0-2-0?login.live.com')">
+                <small>Old</small>
+                <span>0.2.0</span>
+            </button>
+
+            <button class="launcher-btn" onclick="launchGame('./0-5-0?login.live.com')">
+                <small>New</small>
+                <span>0.5.0</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <button class="back-btn" onclick="closeGame()">← Back to Menu</button>
+        <iframe id="game-frame" src="" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        const ui = document.getElementById('launcher-ui');
+        const container = document.getElementById('game-container');
+        const frame = document.getElementById('game-frame');
+
+        function launchGame(url) {
+            ui.style.opacity = '0';
+            setTimeout(() => {
+                ui.style.display = 'none';
+                container.style.display = 'block';
+                frame.src = url;
+            }, 500);
+        }
+
+        function closeGame() {
+            container.style.display = 'none';
+            frame.src = '';
+            ui.style.display = 'block';
+            setTimeout(() => {
+                ui.style.opacity = '1';
+            }, 10);
+        }
+    </script>
+</body>
+</html>

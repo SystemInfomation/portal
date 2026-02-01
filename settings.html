@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestrium Online | Settings</title>
+    <link rel="stylesheet" href="./all.css?login.live.com">
+    <style>
+        .setting-row {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.08);
+            transition: background .25s, color .25s, box-shadow .25s;
+        }
+
+        .setting-row label,
+        .setting-row select,
+        .setting-row button {
+            margin-left: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 2px;
+            bottom: 2px;
+            background: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .keybind-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .keybind-row input {
+            padding: 10px 14px;
+            font-size: 1rem;
+            width: 240px;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            background: var(--card);
+            color: var(--text);
+            font-weight: 500;
+            transition: all 0.25s;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .keybind-row input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 5px rgba(74,144,226,0.4);
+        }
+
+        .keybind-row button {
+            padding: 8px 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background .2s;
+        }
+
+        .keybind-row button:hover {
+            opacity: 0.85;
+        }
+
+        .save-btn {
+            background: var(--accent);
+            color: white;
+        }
+
+        .reset-btn {
+            background: #ccc;
+            color: #333;
+        }
+
+        .upload-btn { margin-left: 8px; padding: 8px 10px; }
+
+        #resetButton {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        #resetButton:hover {
+            background: #3a7bd5;
+        }
+
+        body.dark .setting-row {
+            background: #1f2128;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <h1 class="center">Settings</h1>
+
+        <h2 class="mb-10">Site Aesthetics</h2>
+        <div class="setting-row">
+            <span>Dark Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="darkToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="setting-row">
+            <span>Animations</span>
+            <label class="switch">
+                <input type="checkbox" id="animationsToggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <h2 class="mb-10">Privacy Tools</h2>
+        <div class="setting-row">
+            <span>Escape Keybind</span>
+            <div class="keybind-row">
+                <input type="text" id="keybindInput" placeholder="Press Key Combination">
+                <button class="save-btn" id="saveKeybindBtn">Save</button>
+                <button class="reset-btn" id="resetKeybindBtn">Reset</button>
+            </div>
+        </div>
+
+        <div class="setting-row">
+            <span>Tab Title</span>
+            <div class="keybind-row align-center">
+                <input type="text" id="cloakInput" placeholder="Enter New Page Title">
+                <button class="save-btn" id="saveCloakBtn">Save</button>
+                <button class="reset-btn" id="resetCloakBtn">Reset</button>
+            </div>
+        </div>
+
+        <div class="setting-row">
+            <span>Favicon (Tab Icon)</span>
+            <div class="keybind-row align-center">
+                <input type="text" id="faviconInput" placeholder="Enter Full Favicon URL">
+                <input type="file" id="faviconFileInput" accept="image/png,image/jpeg,image/x-icon,image/vnd.microsoft.icon,image/ico" class="hidden">
+                <button class="save-btn upload-btn" id="uploadFaviconBtn">Upload</button>
+                <span id="faviconFileName" class="ml-8 muted"></span>
+                <button class="save-btn" id="saveFaviconBtn">Save</button>
+                <button class="reset-btn" id="resetFaviconBtn">Reset</button>
+            </div>
+        </div>
+
+        <h2 class="mb-10">Advanced</h2>
+        <div class="setting-row">
+            <button id="resetButton">Reset All Settings to Default</button>
+            <p class="muted">Version <span id="versionDisplay">4.0.13</span></p>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const darkToggle = document.getElementById('darkToggle');
+            const animationsToggle = document.getElementById('animationsToggle');
+            const keybindInput = document.getElementById('keybindInput');
+            const saveKeybindBtn = document.getElementById('saveKeybindBtn');
+            const resetKeybindBtn = document.getElementById('resetKeybindBtn');
+            const cloakInput = document.getElementById('cloakInput');
+            const saveCloakBtn = document.getElementById('saveCloakBtn');
+            const resetCloakBtn = document.getElementById('resetCloakBtn');
+            const faviconInput = document.getElementById('faviconInput');
+            const faviconFileInput = document.getElementById('faviconFileInput');
+            const saveFaviconBtn = document.getElementById('saveFaviconBtn');
+            const resetFaviconBtn = document.getElementById('resetFaviconBtn');
+            const uploadFaviconBtn = document.getElementById('uploadFaviconBtn');
+            const faviconFileName = document.getElementById('faviconFileName');
+            const resetButton = document.getElementById('resetButton');
+
+            // State vars (declare for strict mode)
+            let settingKeybind = false;
+            let tempKeybind = null;
+            let escapeKeybind = null;
+            let pendingCloakTitle = null;
+            let pendingFaviconDataUrl = null;
+            let faviconUrlValid = false;
+            let lastValidatedUrl = null;
+
+            // Load saved keybind and display it
+            const savedKeybind = JSON.parse(localStorage.getItem('celestrium-keybind') || 'null');
+            escapeKeybind = savedKeybind;
+            if (escapeKeybind && keybindInput) {
+                keybindInput.value = escapeKeybind.display || '';
+            }
+
+            // Apply saved theme on load
+            const savedTheme = localStorage.getItem('celestrium-theme') || 'light';
+            document.body.className = savedTheme;
+            darkToggle.checked = savedTheme === 'dark';
+
+            const savedAnimations = localStorage.getItem('celestrium-animations') !== 'false';
+            animationsToggle.checked = savedAnimations;
+
+            // Dark mode toggle
+            darkToggle.addEventListener('change', e => {
+                const theme = e.target.checked ? 'dark' : 'light';
+                document.body.className = theme;
+                localStorage.setItem('celestrium-theme', theme);
+                window.parent.postMessage({type: 'themeChange', theme: theme}, '*');
+            });
+
+            // Animations toggle
+            animationsToggle.addEventListener('change', e => {
+                localStorage.setItem('celestrium-animations', e.target.checked ? 'true' : 'false');
+                window.parent.postMessage({type: 'animationsChange', enabled: e.target.checked}, '*');
+            });
+
+            // Keybind functionality
+            keybindInput.addEventListener('focus', () => { 
+                settingKeybind = true; 
+                tempKeybind = null; 
+                keybindInput.value = ''; 
+            });
+            
+            keybindInput.addEventListener('blur', () => { 
+                settingKeybind = false; 
+                keybindInput.value = escapeKeybind ? escapeKeybind.display : ''; 
+            });
+
+            function normalizeKeyName(key) {
+                if (!key) return null;
+                const s = key.toLowerCase();
+                if (s === ' ') return 'space';
+                if (s === 'esc') return 'escape';
+                if (s === 'return') return 'enter';
+                if (s === 'arrowleft' || s === 'arrowright' || s === 'arrowup' || s === 'arrowdown') return s;
+                if (s === 'control' || s === 'ctrl' || s === 'shift' || s === 'alt' || s === 'meta') return null;
+                if (/^f\d{1,2}$/.test(s)) return s;
+                return s.length === 1 ? s : s;
+            }
+
+            function displayKeyLabel(normKey) {
+                if (!normKey) return '';
+                const map = { escape: 'Esc', space: 'Space', enter: 'Enter', backspace: 'Backspace', delete: 'Delete', tab: 'Tab' };
+                if (map[normKey]) return map[normKey];
+                if (/^f\d{1,2}$/.test(normKey)) return normKey.toUpperCase();
+                if (normKey.startsWith('arrow')) return normKey.replace('arrow', 'Arrow ').replace('up','Up').replace('down','Down').replace('left','Left').replace('right','Right');
+                return normKey.length === 1 ? normKey.toUpperCase() : normKey;
+            }
+
+            function normalizeFromCode(code) {
+                if (!code) return null;
+                if (/^Key[A-Z]$/.test(code)) return code.slice(3).toLowerCase();
+                if (/^Digit[0-9]$/.test(code)) return code.slice(5);
+                return null;
+            }
+
+            function formatKey(e) {
+                const parts = [];
+                if (e.ctrlKey) parts.push('Ctrl');
+                if (e.metaKey) parts.push(navigator.platform.includes('Mac') ? 'Cmd' : 'Meta');
+                if (e.altKey) parts.push('Alt');
+                if (e.shiftKey) parts.push('Shift');
+                const mainNorm = normalizeFromCode(e.code) || normalizeKeyName(e.key);
+                const mainLabel = displayKeyLabel(mainNorm);
+                if (mainLabel) parts.push(mainLabel);
+                return { display: parts.join(' + '), key: mainNorm, ctrl: e.ctrlKey, meta: e.metaKey, alt: e.altKey, shift: e.shiftKey };
+            }
+
+            function matchesKeybind(e, kb) {
+                if (!kb || !kb.key) return false;
+                const k = normalizeFromCode(e.code) || normalizeKeyName(e.key);
+                return k === kb.key && e.ctrlKey === !!kb.ctrl && e.metaKey === !!kb.meta && e.altKey === !!kb.alt && e.shiftKey === !!kb.shift;
+            }
+
+            keybindInput.addEventListener('keydown', e => {
+                // allow typing, but replace the value with our formatted label
+                if (e.key.toLowerCase() === 'backspace') { 
+                    tempKeybind = null; 
+                    keybindInput.value = ''; 
+                    return; 
+                }
+                tempKeybind = formatKey(e);
+                keybindInput.value = tempKeybind.display;
+            });
+
+            saveKeybindBtn.addEventListener('click', () => {
+                if (tempKeybind && tempKeybind.key) {
+                    escapeKeybind = tempKeybind;
+                    window.parent.postMessage({type: 'saveKeybind', keybind: escapeKeybind}, '*');
+                    alert('Keybind saved: ' + escapeKeybind.display + "\n\nYou can use this keybind to escape to Schoology, except when your computer is focused on a game. This will close your tab, so be careful not to do it on accident.");
+                    keybindInput.blur();
+                } else {
+                    alert('Please include a non-modifier key (e.g., Esc, F1, Space, or a letter).');
+                }
+                keybindInput.value = escapeKeybind ? escapeKeybind.display : '';
+                settingKeybind = false;
+            });
+
+            resetKeybindBtn.addEventListener('click', () => { 
+                escapeKeybind = null; 
+                tempKeybind = null; 
+                keybindInput.value = ''; 
+                settingKeybind = false; 
+                window.parent.postMessage({type: 'resetKeybind'}, '*');
+            });
+
+            // Tab cloak functionality
+            if (cloakInput) {
+                const savedTitleForInput = localStorage.getItem('celestrium-tab-title') || '';
+                cloakInput.value = savedTitleForInput;
+                cloakInput.addEventListener('input', e => { 
+                    pendingCloakTitle = e.target.value.trim() || null; 
+                });
+            }
+
+            if (saveCloakBtn) saveCloakBtn.addEventListener('click', () => {
+                const v = pendingCloakTitle !== null ? pendingCloakTitle : (cloakInput ? cloakInput.value.trim() : '');
+                try {
+                    if (v) { 
+                        window.parent.postMessage({type: 'saveCloak', title: v}, '*');
+                        alert('Tab title saved: ' + v + "\n\nThis will change the text shown in your browser tab for this session."); 
+                    } else { 
+                        window.parent.postMessage({type: 'resetCloak'}, '*');
+                        alert('Tab title cleared; using default.'); 
+                    }
+                } catch (e) { 
+                    alert('Could not save setting: ' + e.message); 
+                }
+                pendingCloakTitle = null;
+            });
+
+            if (resetCloakBtn) resetCloakBtn.addEventListener('click', () => { 
+                if (cloakInput) cloakInput.value = ''; 
+                pendingCloakTitle = null; 
+                window.parent.postMessage({type: 'resetCloak'}, '*');
+                alert('Tab cloak reset to default.'); 
+            });
+
+            // Favicon functionality
+            function urlHasAllowedExtension(url) { 
+                try { 
+                    const u = url.split('?')[0].split('#')[0]; 
+                    const ext = u.slice(u.lastIndexOf('.') + 1).toLowerCase(); 
+                    return ['png','jpg','jpeg','ico'].includes(ext); 
+                } catch (e) { 
+                    return false; 
+                } 
+            }
+
+            function validateImageUrl(url) {
+                return new Promise(resolve => {
+                    if (!url) return resolve(false);
+                    const img = new Image(); 
+                    let done = false; 
+                    img.onload = () => { 
+                        if (done) return; 
+                        done = true; 
+                        lastValidatedUrl = url; 
+                        faviconUrlValid = true; 
+                        resolve(true); 
+                    };
+                    img.onerror = () => { 
+                        if (done) return; 
+                        done = true; 
+                        lastValidatedUrl = url; 
+                        faviconUrlValid = false; 
+                        resolve(false); 
+                    };
+                    img.src = url; 
+                    setTimeout(() => { 
+                        if (done) return; 
+                        done = true; 
+                        lastValidatedUrl = url; 
+                        faviconUrlValid = false; 
+                        resolve(false); 
+                    }, 5000);
+                });
+            }
+
+            if (faviconInput) faviconInput.value = '';
+            faviconUrlValid = false; 
+            lastValidatedUrl = null;
+
+            if (faviconInput) faviconInput.addEventListener('input', () => { 
+                pendingFaviconDataUrl = null; 
+                if (faviconFileName) faviconFileName.textContent = ''; 
+                faviconUrlValid = false; 
+                lastValidatedUrl = null; 
+            });
+
+            if (faviconFileInput) {
+                faviconFileInput.addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0]; 
+                    if (!file) return;
+                    const name = (file.name || '').toLowerCase(); 
+                    const ext = name.slice(name.lastIndexOf('.') + 1);
+                    const allowedExt = ['png','jpg','jpeg','ico']; 
+                    const allowedTypes = ['image/png','image/jpeg','image/x-icon','image/vnd.microsoft.icon','image/ico'];
+                    if (!allowedExt.includes(ext) || !allowedTypes.includes(file.type)) { 
+                        alert('Please select a .png, .jpg/.jpeg, or .ico image file.'); 
+                        faviconFileInput.value = ''; 
+                        return; 
+                    }
+                    const reader = new FileReader(); 
+                    reader.onload = (ev) => { 
+                        pendingFaviconDataUrl = ev.target.result; 
+                        if (faviconInput) faviconInput.value = ''; 
+                        if (faviconFileName) faviconFileName.textContent = file.name || ''; 
+                        faviconUrlValid = true; 
+                        lastValidatedUrl = null; 
+                    };
+                    reader.readAsDataURL(file);
+                });
+                if (uploadFaviconBtn) uploadFaviconBtn.addEventListener('click', ev => { 
+                    ev.preventDefault(); 
+                    faviconFileInput.click(); 
+                });
+            }
+
+            if (saveFaviconBtn) saveFaviconBtn.addEventListener('click', () => {
+                const typed = faviconInput ? faviconInput.value.trim() : '';
+                const v = pendingFaviconDataUrl || typed;
+                try {
+                    if (pendingFaviconDataUrl) { 
+                        window.parent.postMessage({type: 'saveFavicon', href: pendingFaviconDataUrl}, '*');
+                        pendingFaviconDataUrl = null; 
+                        if (faviconFileInput) faviconFileInput.value = ''; 
+                        if (faviconInput) faviconInput.value = ''; 
+                        if (faviconFileName) faviconFileName.textContent = ''; 
+                        alert('Favicon saved.\n\nThis will change the tab icon shown in your browser for this session.'); 
+                        return; 
+                    }
+                    if (v) {
+                        // Allow direct save for typed URL if extension is allowed
+                        if (typed && urlHasAllowedExtension(typed)) {
+                            window.parent.postMessage({type: 'saveFavicon', href: typed}, '*');
+                            if (faviconFileName) faviconFileName.textContent = '';
+                            alert('Favicon saved: ' + typed + "\n\nThis will change the tab icon shown in your browser for this session.");
+                            return;
+                        }
+                        // Fallback to validation for non-typed or uncertain cases
+                        validateImageUrl(v).then(valid => { 
+                            if (valid) { 
+                                window.parent.postMessage({type: 'saveFavicon', href: v}, '*');
+                                if (faviconFileName) faviconFileName.textContent = ''; 
+                                alert('Favicon saved.\n\nThis will change the tab icon shown in your browser for this session.'); 
+                            } else { 
+                                alert('Could not save favicon: the URL did not load as an image.'); 
+                            } 
+                        });
+                    } else { 
+                        window.parent.postMessage({type: 'resetFavicon'}, '*');
+                        alert('Favicon cleared; using default.'); 
+                    }
+                } catch (e) { 
+                    alert('Could not save favicon: ' + e.message); 
+                }
+            });
+
+            if (resetFaviconBtn) resetFaviconBtn.addEventListener('click', () => { 
+                if (faviconInput) faviconInput.value = ''; 
+                if (faviconFileInput) faviconFileInput.value = ''; 
+                pendingFaviconDataUrl = null; 
+                faviconUrlValid = false; 
+                lastValidatedUrl = null; 
+                window.parent.postMessage({type: 'resetFavicon'}, '*');
+                if (faviconFileName) faviconFileName.textContent = ''; 
+                alert('Favicon reset to default.'); 
+            });
+
+            // Reset all settings
+            resetButton.addEventListener('click', () => {
+                darkToggle.checked = false;
+                document.body.className = 'light';
+                localStorage.setItem('celestrium-theme', 'light');
+                window.parent.postMessage({type: 'themeChange', theme: 'light'}, '*');
+                animationsToggle.checked = true;
+                localStorage.setItem('celestrium-animations', 'true');
+                window.parent.postMessage({type: 'animationsChange', enabled: true}, '*');
+                escapeKeybind = null; 
+                keybindInput.value = '';
+                window.parent.postMessage({type: 'resetKeybind'}, '*');
+                window.parent.postMessage({type: 'resetCloak'}, '*');
+                window.parent.postMessage({type: 'resetFavicon'}, '*');
+                alert('All settings reset to default.');
+            });
+
+            // Notify parent this page is ready to receive state
+            try { window.parent.postMessage({type: 'pageLoaded'}, '*'); } catch {}
+
+            // Listen for theme changes from parent
+            window.addEventListener('message', (e) => {
+                if (e.data.type === 'themeChange') {
+                    document.body.className = e.data.theme;
+                    darkToggle.checked = e.data.theme === 'dark';
+                } else if (e.data.type === 'versionUpdate') {
+                    const versionEl = document.getElementById('versionDisplay');
+                    if (versionEl) versionEl.textContent = e.data.version;
+                }
+            });
+
+            // Forward saved keybind when pressed (avoid when adjusting keybind)
+            document.addEventListener('keydown', (e) => {
+                if (settingKeybind) return;
+                try {
+                    const kbJSON = localStorage.getItem('celestrium-keybind');
+                    const kb = kbJSON ? JSON.parse(kbJSON) : null;
+                    if (matchesKeybind(e, kb)) {
+                        window.parent.postMessage({type: 'triggerKeybind'}, '*');
+                    }
+                } catch {}
+            });
+        })();
+    </script>
+</body>
+</html>

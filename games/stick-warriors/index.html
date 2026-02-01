@@ -1,0 +1,103 @@
+<title>Celestrium Online | Stick Warriors</title>
+<link rel="icon" type="image/png" href="favicon.png?login.live.com">
+<div id="container">
+  <iframe id="fr" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<style>
+  .content-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    border: none;
+    overflow: hidden;
+    z-index: 1000;
+    background-color: #000;
+  }
+  
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+  }
+</style>
+
+<script>
+  const DB_NAME = 'GameCacheDB';
+  const STORE_NAME = 'GameFiles';
+  const CACHE_DURATION = 90 * 24 * 60 * 60 * 1000; // 3 ay
+  const FILE_URL = 'https://cdn.jsdelivr.net/gh/gru6nny/ohd@main/swarr.xml';
+
+  // IndexedDB veritabanını aç
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, 1);
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        db.createObjectStore(STORE_NAME, { keyPath: 'url' });
+      };
+      request.onsuccess = (event) => resolve(event.target.result);
+      request.onerror = (event) => reject(event.target.error);
+    });
+  }
+
+  // Dosyayı IndexedDB'ye kaydet (ayrı transaction)
+  async function saveToCache(url, content) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.put({ url: url, content: content, timestamp: Date.now() });
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(new Error('Failed to cache file'));
+    });
+  }
+
+  // Dosyayı IndexedDB'den al veya çek ve kaydet
+  async function getFileFromCache(url) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE_NAME, 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.get(url);
+
+      request.onsuccess = async (event) => {
+        const data = event.target.result;
+        if (data && (Date.now() - data.timestamp) < CACHE_DURATION) {
+          resolve(data.content);
+        } else {
+          try {
+            const response = await fetch(url);
+            const text = await response.text();
+            await saveToCache(url, text); // Ayrı transaction ile kaydet
+            resolve(text);
+          } catch (err) {
+            reject(err);
+          }
+        }
+      };
+      request.onerror = (event) => reject(event.target.error);
+    });
+  }
+
+  function PlayTo(button) {
+    const iframe = document.getElementById("fr");
+    getFileFromCache(FILE_URL).then((text) => {
+      iframe.contentDocument.open();
+      iframe.contentDocument.write(text);
+      iframe.contentDocument.close();
+      iframe.style.display = "block";
+      button.style.display = "none";
+    }).catch((err) => {
+      console.error('Error loading game:', err);
+    });
+  }
+
+  window.onload = PlayTo;
+</script>

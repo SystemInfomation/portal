@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestrium Online | About</title>
+    <link rel="stylesheet" href="./all.css?login.live.com">
+    <style>
+        .about-card {
+            background: var(--card);
+            padding: 40px;
+            border-radius: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            transition: background .25s, color .25s, box-shadow .25s, transform .15s;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .lead {
+            color: var(--subtext);
+            font-size: 1.12rem;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        .about-main h2.accent {
+            color: var(--accent);
+            margin: 6px 0 10px 0;
+        }
+
+        .about-main h3 {
+            margin: 18px 0 10px 0;
+        }
+
+        .about-features {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0 0 0;
+            display: grid;
+            gap: 12px;
+        }
+
+        .about-features li {
+            background: linear-gradient(90deg, rgba(74,144,226,0.08), transparent 40%);
+            background-color: rgba(0,0,0,0.02);
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: var(--text);
+            font-weight: 600;
+            line-height: 1.45;
+            transition: background .25s, color .25s;
+        }
+
+        body.dark .about-features li {
+            background: linear-gradient(90deg, rgba(94,168,255,0.04), transparent 40%);
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        .about-side {
+            background: rgba(0,0,0,0.02);
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: var(--subtext);
+            line-height: 1.5;
+        }
+
+        .about-side h3 { color: var(--text); margin-top: 0; }
+
+        hr.about-sep {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.04), rgba(0,0,0,0.02));
+            margin: 26px 0;
+        }
+
+        .about-card p { margin-bottom: 14px; line-height: 1.7; }
+
+        .about-section { margin-top: 18px; }
+
+        .faq details { margin: 12px 0; }
+
+        .faq summary { cursor: pointer; font-weight: 700; padding: 8px 6px; }
+
+        @media (max-width: 860px) {
+            .about-grid { grid-template-columns: 1fr; }
+            .about-side { order: 2; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="about-card">
+            <h1 class="center">About Celestrium Online</h1>
+            <div class="about-grid">
+                <div class="about-main">
+                    <h2 class="accent">Our Mission</h2>
+                    <p>
+                        Celestrium Online exists to provide a clean, minimal, and dependable place to play browser games.
+                        We prioritize speed, usability, and a clutter-free experience so players can jump straight into
+                        gameplay without distractions.
+                    </p>
+
+                    <h3>How it Works</h3>
+                    <p>
+                        Games are organized into a searchable, curated library. Links open in a lightweight iframe to keep
+                        navigation immediate and fast. Settings let you tailor the site for school or personal use.
+                    </p>
+
+                    <h3>Highlights</h3>
+                    <ul class="about-features">
+                        <li>Curated Library — Hand-picked games that run well on most devices</li>
+                        <li>Fast Loading — Optimized assets for quick navigation</li>
+                        <li>Privacy Tools — Tab cloak and escape keybind</li>
+                        <li>Responsive Design — Works on school chromebooks, other laptops, tablets, and phones</li>
+                        <li>Customizable Settings — Dark mode & animations toggle</li>
+                    </ul>
+                </div>
+
+                <aside class="about-side">
+                    <h3>Credits</h3>
+                    <p>Created and maintained by the Celestrium Online team. Special thanks to contributors who helped keep the experience lightweight and reliable.</p>
+
+                    <h3>Privacy & Safety</h3>
+                    <p>
+                        We do not collect personal data by default. Built-in privacy tools (tab cloak, favicon controls)
+                        are session-only and do not persist to storage unless explicitly used via the Settings page.
+                    </p>
+                </aside>
+            </div>
+
+            <hr class="about-sep">
+
+            <h3>More About the Project</h3>
+            <div class="ml-20">
+                <div class="about-section">
+                    <h4>History</h4>
+                    <p>
+                        Started as a weekend project, Celestrium Online gradually expanded as more games and features
+                        were added. The goal has remained consistent: keep the UI minimal and fast while offering useful
+                        tools to customize the browsing experience.
+                    </p>
+
+                    <h4>Values</h4>
+                    <p>
+                        Simplicity, performance, and respect for user privacy. We favor lightweight solutions and avoid
+                        intrusive ads or tracking in the core portal.
+                    </p>
+
+                    <h4>Contributing</h4>
+                    <p>
+                        If you'd like to suggest games or improvements, open an issue on the repository or contribute a
+                        pull request. We welcome constructive contributions that help improve accessibility and performance.
+                    </p>
+
+                    <h4>Changelog (Major Updates)</h4>
+                    <ul class="about-features">
+                        <li>v4 — Architecture Refactor</li>
+                            <li class="ml-20">v4.2 — Addition of Fullscreen & About:Blank Options for Games</li>
+                            <li class="ml-20">v4.0 — Addition of Modular Pages</li>
+                        <li>v3 — Major UI Overhaul</li>
+                            <li class="ml-20">v3.7 — Homepage Rework</li>
+                            <li class="ml-20">v3.5 — Refactored About Page</li>
+                            <li class="ml-20">v3.3 — Introduction of Privacy Settings to Settings</li>
+                            <li class="ml-20">v3.0 — Major Aesthetics Overhaul</li>
+                        <li>v2 — Major UI Overhaul</li>
+                            <li class="ml-20">v2.5 — Introduction of Settings</li>
+                            <li class="ml-20">v2.0 — Addition of 50+ Games</li>
+                        <li>v1.0 — Initial Public Release</li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="about-sep">
+
+            <h3>FAQ</h3>
+            <div class="faq">
+                <details>
+                    <summary>Is Celestrium Online free to use?</summary>
+                    <p class="ml-20">Yes, Celestrium Online is freely available and designed for quick access to games.</p>
+                </details>
+                <details>
+                    <summary>Will it work on school devices?</summary>
+                    <p class="ml-20">Celestrium Online is optimized for Chromebooks and typical school computers, but network restrictions may block some games.</p>
+                </details>
+                <details>
+                    <summary>How do I request a game or report an issue?</summary>
+                    <p class="ml-20">Open an <a href="https://github.com/celestrium-games/celestrium-online-portal/issues">issue on the project's repository</a> with details. Maintainers will review submissions.</p>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Apply saved theme on load
+        document.body.className = localStorage.getItem('celestrium-theme') || 'light';
+
+        // Listen for theme changes from parent
+        window.addEventListener('message', (e) => {
+            if (e.data.type === 'themeChange') {
+                document.body.className = e.data.theme;
+            }
+        });
+    </script>
+    <script>
+        (function(){
+            function normalizeKeyName(key) {
+                if (!key) return null;
+                const s = key.toLowerCase();
+                if (s === ' ') return 'space';
+                if (s === 'esc') return 'escape';
+                if (s === 'return') return 'enter';
+                if (s === 'arrowleft' || s === 'arrowright' || s === 'arrowup' || s === 'arrowdown') return s;
+                if (s === 'control' || s === 'ctrl' || s === 'shift' || s === 'alt' || s === 'meta') return null;
+                if (/^f\d{1,2}$/.test(s)) return s;
+                return s.length === 1 ? s : s;
+            }
+            function normalizeFromCode(code) {
+                if (!code) return null;
+                if (/^Key[A-Z]$/.test(code)) return code.slice(3).toLowerCase();
+                if (/^Digit[0-9]$/.test(code)) return code.slice(5);
+                return null;
+            }
+            function matchesKeybind(e, kb) {
+                if (!kb || !kb.key) return false;
+                const k = normalizeFromCode(e.code) || normalizeKeyName(e.key);
+                return k === kb.key && e.ctrlKey === !!kb.ctrl && e.metaKey === !!kb.meta && e.altKey === !!kb.alt && e.shiftKey === !!kb.shift;
+            }
+            document.addEventListener('keydown', e => {
+                const kbJSON = localStorage.getItem('celestrium-keybind');
+                const kb = kbJSON ? JSON.parse(kbJSON) : null;
+                if (matchesKeybind(e, kb)) {
+                    try { window.parent.postMessage({type: 'triggerKeybind'}, '*'); } catch {}
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
