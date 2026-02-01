@@ -36,4 +36,4 @@ This site is created and maintained by the Celestrium Online team. Special thank
 
 ## Notes
 If you fork this repo, please consider leaving a star.
-Our Creator Made an [Easter Egg For You](https://celestrium-games.github.io/portal/easter-egg.txt?login.live.com) Since You've Made it This Far
+Our Creator Made an [Easter Egg For You](https://celestrium-online-portal.vercel.app/easter-egg.txt?login.live.com) Since You've Made it This Far
