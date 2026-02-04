@@ -43,6 +43,9 @@ export default function GamesPage() {
         <p className="text-muted-foreground text-lg">
           Browse our collection of {games.length} awesome games
         </p>
+        <p className="text-yellow-500/80 font-medium">
+          ⚠️ Please use this website responsibly
+        </p>
       </motion.div>
 
       {/* Search Bar */}

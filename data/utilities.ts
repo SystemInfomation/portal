@@ -3,8 +3,8 @@ import { Utility } from '@/lib/types'
 export const utilities: Utility[] = [
   {
     id: 'about-blank-cloaker',
-    name: 'About:Blank Cloaker',
-    description: 'Open games in a blank tab for privacy',
+    name: 'About:Blank Proxy',
+    description: 'Open sites through a proxy in a blank tab with working links',
     iconUrl: '/utilities/about-blank-cloaker/favicon.png',
     iframeSrc: '/utilities/about-blank-cloaker/'
   },

@@ -57,6 +57,15 @@ export default function Home() {
           A Fast, Curated Portal for Playing HTML Games — Built to Be Simple, Safe, & Enjoyable
         </motion.p>
 
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.6 }}
+          className="text-lg text-yellow-500/80 font-medium"
+        >
+          ⚠️ Please use this website responsibly
+        </motion.p>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
