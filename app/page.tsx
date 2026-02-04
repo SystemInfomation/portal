@@ -6,6 +6,7 @@ import { editorsPicks } from '@/data/editors-picks'
 import { GameCard } from '@/components/GameCard'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function Home() {
   const router = useRouter()
@@ -129,19 +130,19 @@ export default function Home() {
       >
         <p>Curated by the Weather Man — Click a Game to Play</p>
         <div className="flex items-center justify-center gap-4">
-          <a 
-            href="/privacy" 
+          <Link 
+            href="/privacy/" 
             className="text-primary hover:text-primary/80 transition-colors underline"
           >
             Privacy Policy
-          </a>
+          </Link>
           <span className="text-muted-foreground">•</span>
-          <a 
-            href="/terms" 
+          <Link 
+            href="/terms/" 
             className="text-primary hover:text-primary/80 transition-colors underline"
           >
             Terms of Service
-          </a>
+          </Link>
         </div>
         <p>Version 5.0.0 • {new Date().getFullYear()}</p>
       </motion.footer>
