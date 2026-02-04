@@ -18,9 +18,36 @@ npm run build
 npm start
 ```
 
+## 📦 GitHub Pages Deployment (Recommended)
+
+This project is configured for automatic deployment to GitHub Pages:
+
+### Automatic Deployment
+
+1. **Enable GitHub Pages** in your repository:
+   - Go to Settings → Pages
+   - Under "Build and deployment", select **GitHub Actions** as the source
+
+2. **Push to main branch**:
+   - The workflow automatically triggers on push to `main`
+   - Or manually trigger from Actions → "Deploy to GitHub Pages" → "Run workflow"
+
+3. **Access your site**:
+   - Your site will be available at: `https://<username>.github.io/portal/`
+
+### Manual Deployment
+
+```bash
+npm install
+./setup.sh
+GITHUB_PAGES=true npm run build
+```
+
+The static export will be in the `out/` directory, ready to upload.
+
 ## 📦 Vercel Deployment
 
-This project is optimized for Vercel deployment:
+This project also works with Vercel:
 
 1. Connect your GitHub repository to Vercel
 2. Configure build settings:
@@ -32,6 +59,8 @@ This project is optimized for Vercel deployment:
 3. Environment Variables: None required (all games are static files)
 
 4. Deploy! 🎉
+
+**Note:** For Vercel deployment, the `output: 'export'` setting in `next.config.js` can be removed for server-side features.
 
 **IMPORTANT:** The `setup.sh` script must run before build to copy static game files to the `public/` directory.
 
