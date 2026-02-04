@@ -5,7 +5,7 @@ import { Play } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Game } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { cn, withBasePath } from '@/lib/utils'
 
 interface GameCardProps {
   game: Game
@@ -33,7 +33,7 @@ export function GameCard({ game, className }: GameCardProps) {
         {/* Game Icon */}
         <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
           <Image
-            src={game.iconUrl}
+            src={withBasePath(game.iconUrl)}
             alt={game.name}
             width={80}
             height={80}

@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2, Maximize, RefreshCw } from 'lucide-react'
 import { games } from '@/data/games'
 import { utilities } from '@/data/utilities'
 import { Game, Utility } from '@/lib/types'
+import { withBasePath } from '@/lib/utils'
 
 interface PlayPageClientProps {
   slug: string
@@ -110,7 +111,7 @@ export default function PlayPageClient({ slug }: PlayPageClientProps) {
       {/* Iframe */}
       <div className="flex-1 relative">
         <iframe
-          src={item.iframeSrc}
+          src={withBasePath(item.iframeSrc)}
           className="w-full h-full border-none"
           onLoad={() => setLoading(false)}
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"

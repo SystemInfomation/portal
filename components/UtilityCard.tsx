@@ -5,7 +5,7 @@ import { Play } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Utility } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { cn, withBasePath } from '@/lib/utils'
 
 interface UtilityCardProps {
   utility: Utility
@@ -33,7 +33,7 @@ export function UtilityCard({ utility, className }: UtilityCardProps) {
         {/* Utility Icon */}
         <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-muted flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
           <Image
-            src={utility.iconUrl}
+            src={withBasePath(utility.iconUrl)}
             alt={utility.name}
             width={80}
             height={80}
