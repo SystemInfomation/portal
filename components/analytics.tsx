@@ -2,12 +2,16 @@
 
 import { useEffect, Suspense } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { simpleGA } from '@/lib/ga-realtime-simple'
 
 function AnalyticsInner() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    // Start simple GA tracking
+    simpleGA.startHeartbeat()
+    
     if (typeof window !== 'undefined' && window.gtag) {
       const url = pathname + searchParams.toString()
       
