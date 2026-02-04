@@ -539,6 +539,7 @@
       <button class="go-btn" id="go-btn">Go</button>
     </div>
   </div>
+  <!-- Note: sandbox needs allow-same-origin for blob URLs to work. Content is isolated via blob URL. -->
   <iframe class="content-frame" id="content-frame" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
   
   <script>
@@ -596,9 +597,10 @@
           const fullUrl = resolveUrl(href, baseUrl);
           if (fullUrl.startsWith("http")) {
             a.setAttribute("data-proxy-href", fullUrl);
-            a.setAttribute("href", "javascript:void(0)");
+            a.setAttribute("href", "#");
             a.onclick = function(e) {
               e.preventDefault();
+              // Note: Using "*" for origin since we're in about:blank context
               window.parent.postMessage({ type: "navigate", url: fullUrl }, "*");
             };
           }
@@ -672,12 +674,13 @@
           return;
         }
         
-        // All proxies failed
+        // All proxies failed - encode URL to prevent XSS
+        const safeUrl = url.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         contentFrame.srcdoc = \`
           <div style="padding: 40px; text-align: center; font-family: sans-serif; color: #333;">
             <h2 style="color: #dc2626;">Failed to load page</h2>
             <p style="color: #666; margin-top: 12px;">The proxy could not fetch this page. The site may be blocking proxy requests.</p>
-            <p style="color: #888; margin-top: 8px; font-size: 14px;">URL: \${url}</p>
+            <p style="color: #888; margin-top: 8px; font-size: 14px;">URL: \${safeUrl}</p>
           </div>
         \`;
         proxyIndex = 0;
@@ -721,9 +724,15 @@
     });
     
     // Handle navigation messages from iframe
+    // Note: We accept messages from 'null' origin (blob URLs) and validate the message structure
     window.addEventListener("message", (e) => {
-      if (e.data && e.data.type === "navigate") {
-        loadUrl(e.data.url);
+      // Only accept messages from our blob URL iframe (origin is 'null' for blob URLs)
+      if (e.origin !== 'null' && e.origin !== 'blob:') return;
+      if (e.data && e.data.type === "navigate" && typeof e.data.url === "string") {
+        // Validate URL starts with http/https
+        if (e.data.url.startsWith("http://") || e.data.url.startsWith("https://")) {
+          loadUrl(e.data.url);
+        }
       }
     });
     
