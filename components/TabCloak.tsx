@@ -54,6 +54,7 @@ const CLOAK_OPTIONS: CloakOption[] = [
 
 export function TabCloak() {
   const [selectedCloak, setSelectedCloak] = useState<string>('none')
+  const [cooldownRemaining, setCooldownRemaining] = useState(0)
 
   useEffect(() => {
     // Load saved cloak on mount
@@ -66,6 +67,29 @@ export function TabCloak() {
   }, [])
 
   const applyCloak = (cloakId: string) => {
+    // Check rate limit
+    const lastChange = localStorage.getItem('forsyth-cloak-last-change')
+    if (lastChange) {
+      const timeSinceChange = Date.now() - parseInt(lastChange)
+      if (timeSinceChange < 3000) { // 3 seconds cooldown
+        const remaining = Math.ceil((3000 - timeSinceChange) / 1000)
+        setCooldownRemaining(remaining)
+        
+        // Start countdown
+        const interval = setInterval(() => {
+          setCooldownRemaining(prev => {
+            if (prev <= 1) {
+              clearInterval(interval)
+              return 0
+            }
+            return prev - 1
+          })
+        }, 1000)
+        
+        return
+      }
+    }
+    
     setSelectedCloak(cloakId)
     
     if (cloakId === 'none') {
@@ -80,6 +104,7 @@ export function TabCloak() {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('forsyth-tab-cloak')
         localStorage.removeItem('forsyth-bg-color')
+        localStorage.setItem('forsyth-cloak-last-change', Date.now().toString())
       }
     } else {
       const option = CLOAK_OPTIONS.find(o => o.id === cloakId)
@@ -102,6 +127,7 @@ export function TabCloak() {
         if (typeof window !== 'undefined') {
           localStorage.setItem('forsyth-tab-cloak', cloakId)
           localStorage.setItem('forsyth-bg-color', option.backgroundColor)
+          localStorage.setItem('forsyth-cloak-last-change', Date.now().toString())
         }
       }
     }
@@ -124,14 +150,23 @@ export function TabCloak() {
       </p>
 
       <div className="grid gap-3 mt-6">
+        {cooldownRemaining > 0 && (
+          <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-center">
+            <p className="text-sm text-yellow-200/80">
+              Please wait {cooldownRemaining} second{cooldownRemaining !== 1 ? 's' : ''} before changing cloak again.
+            </p>
+          </div>
+        )}
+        
         {/* Default Option */}
         <button
           onClick={() => applyCloak('none')}
+          disabled={cooldownRemaining > 0}
           className={`p-4 rounded-xl border-2 transition-all text-left ${
             selectedCloak === 'none'
               ? 'border-primary bg-primary/10'
               : 'border-border hover:border-primary/50'
-          }`}
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
@@ -149,11 +184,12 @@ export function TabCloak() {
           <button
             key={option.id}
             onClick={() => applyCloak(option.id)}
+            disabled={cooldownRemaining > 0}
             className={`p-4 rounded-xl border-2 transition-all text-left ${
               selectedCloak === option.id
                 ? 'border-primary bg-primary/10'
                 : 'border-border hover:border-primary/50'
-            }`}
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <div className="flex items-center gap-3">
               <img

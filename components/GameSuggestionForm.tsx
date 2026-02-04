@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Gamepad2 } from 'lucide-react'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
@@ -10,9 +10,48 @@ export function GameSuggestionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [captchaToken, setCaptchaToken] = useState<string>("")
   const captchaRef = useRef<HCaptcha>(null)
+  const [cooldownRemaining, setCooldownRemaining] = useState(0)
+
+  // Check for cooldown on mount
+  useEffect(() => {
+    const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
+    if (lastSubmission) {
+      const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
+      const cooldownPeriod = 60000 // 60 seconds
+      
+      if (timeSinceSubmit < cooldownPeriod) {
+        const remaining = Math.ceil((cooldownPeriod - timeSinceSubmit) / 1000)
+        setCooldownRemaining(remaining)
+        
+        // Start countdown
+        const interval = setInterval(() => {
+          const newRemaining = Math.ceil((cooldownPeriod - (Date.now() - parseInt(lastSubmission))) / 1000)
+          if (newRemaining <= 0) {
+            setCooldownRemaining(0)
+            clearInterval(interval)
+          } else {
+            setCooldownRemaining(newRemaining)
+          }
+        }, 1000)
+        
+        return () => clearInterval(interval)
+      }
+    }
+  }, [])
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    
+    // Check rate limit
+    const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
+    if (lastSubmission) {
+      const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
+      if (timeSinceSubmit < 60000) { // 60 seconds cooldown
+        const remaining = Math.ceil((60000 - timeSinceSubmit) / 1000)
+        setResult(`Please wait ${remaining} seconds before submitting another suggestion.`)
+        return
+      }
+    }
     
     if (!captchaToken) {
       setResult("Please complete the captcha verification")
@@ -39,6 +78,21 @@ export function GameSuggestionForm() {
         ;(event.target as HTMLFormElement).reset()
         setCaptchaToken("")
         captchaRef.current?.resetCaptcha()
+        
+        // Set cooldown
+        localStorage.setItem('forsyth-form-last-submit', Date.now().toString())
+        setCooldownRemaining(60)
+        
+        // Start countdown
+        const interval = setInterval(() => {
+          setCooldownRemaining(prev => {
+            if (prev <= 1) {
+              clearInterval(interval)
+              return 0
+            }
+            return prev - 1
+          })
+        }, 1000)
       } else {
         console.error("Form submission failed:", data)
         setResult(data.message || "Error submitting form. Please try again.")
@@ -126,10 +180,14 @@ export function GameSuggestionForm() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || cooldownRemaining > 0}
           className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Submitting..." : "Submit Suggestion"}
+          {cooldownRemaining > 0 
+            ? `Please wait ${cooldownRemaining}s` 
+            : isSubmitting 
+              ? "Submitting..." 
+              : "Submit Suggestion"}
         </button>
 
         {result && (
