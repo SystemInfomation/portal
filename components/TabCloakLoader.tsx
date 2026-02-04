@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react'
 
+const DEFAULT_FAVICON = 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png'
+
 const CLOAK_OPTIONS = [
   {
     id: 'google-drive',
@@ -32,6 +34,8 @@ const CLOAK_OPTIONS = [
 
 export function TabCloakLoader() {
   useEffect(() => {
+    if (typeof window === 'undefined') return
+    
     const savedCloak = localStorage.getItem('forsyth-tab-cloak')
     
     if (savedCloak && savedCloak !== 'none') {

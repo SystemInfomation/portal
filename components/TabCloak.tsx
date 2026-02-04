@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Globe } from 'lucide-react'
 
+const DEFAULT_FAVICON = 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png'
+
 interface CloakOption {
   id: string
   name: string
@@ -49,9 +51,11 @@ export function TabCloak() {
 
   useEffect(() => {
     // Load saved cloak on mount
-    const saved = localStorage.getItem('forsyth-tab-cloak')
-    if (saved && saved !== 'none') {
-      setSelectedCloak(saved)
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('forsyth-tab-cloak')
+      if (saved && saved !== 'none') {
+        setSelectedCloak(saved)
+      }
     }
   }, [])
 
@@ -63,9 +67,11 @@ export function TabCloak() {
       document.title = 'Forsyth Games Portal'
       const favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement
       if (favicon) {
-        favicon.href = 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png'
+        favicon.href = DEFAULT_FAVICON
       }
-      localStorage.removeItem('forsyth-tab-cloak')
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('forsyth-tab-cloak')
+      }
     } else {
       const option = CLOAK_OPTIONS.find(o => o.id === cloakId)
       if (option) {
@@ -81,7 +87,9 @@ export function TabCloak() {
         favicon.href = option.icon
         
         // Save to localStorage
-        localStorage.setItem('forsyth-tab-cloak', cloakId)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('forsyth-tab-cloak', cloakId)
+        }
       }
     }
   }
@@ -141,7 +149,7 @@ export function TabCloak() {
                 className="w-10 h-10 rounded-lg object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement
-                  target.style.display = 'none'
+                  target.src = DEFAULT_FAVICON
                 }}
               />
               <div>

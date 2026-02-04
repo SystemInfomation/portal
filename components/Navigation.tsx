@@ -14,6 +14,9 @@ const navItems = [
   { name: 'Settings', href: '/settings' },
 ]
 
+const SCROLL_TOP_THRESHOLD = 10
+const SCROLL_HIDE_THRESHOLD = 100
+
 export function Navigation() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -30,9 +33,9 @@ export function Navigation() {
       const currentScrollY = window.scrollY
       
       // Show navbar when scrolling up or at top, hide when scrolling down
-      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+      if (currentScrollY < lastScrollY || currentScrollY < SCROLL_TOP_THRESHOLD) {
         setIsVisible(true)
-      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      } else if (currentScrollY > lastScrollY && currentScrollY > SCROLL_HIDE_THRESHOLD) {
         setIsVisible(false)
       }
       
