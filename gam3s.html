@@ -17,8 +17,9 @@
         </div>
 
         <div class="items-container">
-            <div id="itemList"></div>
-            <div id="no-results" class="hidden">
+            <!-- Category headers and games grid will be rendered by search.js -->
+            <div id="itemList" aria-live="polite" aria-label="Games List"></div>
+            <div id="no-results" class="hidden" role="status" aria-live="assertive">
                 <img src="./assets/invalid-search.png?login.live.com" alt="No Search Results">
                 <p>No games match your query. Please check your spelling or adjust your search term.</p>
             </div>
