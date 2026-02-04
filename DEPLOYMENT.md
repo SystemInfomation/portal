@@ -18,9 +18,88 @@ npm run build
 npm start
 ```
 
+## 📦 GitHub Pages Deployment (Recommended)
+
+This project is configured for automatic deployment to GitHub Pages:
+
+### Automatic Deployment
+
+1. **Enable GitHub Pages** in your repository:
+   - Go to Settings → Pages
+   - Under "Build and deployment", select **GitHub Actions** as the source
+
+2. **Push to main branch**:
+   - The workflow automatically triggers on push to `main`
+   - Or manually trigger from Actions → "Deploy to GitHub Pages" → "Run workflow"
+
+3. **Access your site**:
+   - Your site will be available at: `https://<username>.github.io/portal/`
+
+### Custom Domain Setup
+
+You can use your own custom domain with GitHub Pages:
+
+#### Supported Custom Domain Types
+
+| Domain Type | Example | Use Case |
+|-------------|---------|----------|
+| **Apex domain** | `yourdomain.com` | Main website |
+| **Subdomain** | `games.yourdomain.com` | Dedicated games portal |
+| **www subdomain** | `www.yourdomain.com` | Traditional web address |
+
+#### Setup Instructions
+
+1. **Configure DNS** at your domain registrar:
+
+   **For apex domains** (e.g., `yourdomain.com`):
+   ```
+   A     @     185.199.108.153
+   A     @     185.199.109.153
+   A     @     185.199.110.153
+   A     @     185.199.111.153
+   ```
+
+   **For subdomains** (e.g., `games.yourdomain.com`):
+   ```
+   CNAME   games   <username>.github.io
+   ```
+
+2. **Add custom domain in GitHub**:
+   - Go to Settings → Pages
+   - Enter your domain in "Custom domain"
+   - Check "Enforce HTTPS" (after DNS propagates)
+
+3. **Create CNAME file** (optional - GitHub can create this):
+   - Create `public/CNAME` with your domain:
+     ```
+     yourdomain.com
+     ```
+
+4. **Update build configuration**:
+   - When using a custom domain, remove the `GITHUB_PAGES=true` environment variable
+   - This sets `basePath` and `assetPrefix` to empty strings (root deployment)
+
+#### Popular Domain Registrars
+
+- **Cloudflare** - Free DNS with CDN and DDoS protection
+- **Namecheap** - Affordable domains with free WhoisGuard
+- **Google Domains** - Simple interface, good integration
+- **Porkbun** - Low prices, free WHOIS privacy
+- **GoDaddy** - Large selection, frequent sales
+
+### Manual Deployment
+
+```bash
+npm install
+./setup.sh
+GITHUB_PAGES=true npm run build
+```
+
+The static export will be in the `out/` directory, ready to upload.
+
 ## 📦 Vercel Deployment
 
-This project is optimized for Vercel deployment:
+This project also works with Vercel:
 
 1. Connect your GitHub repository to Vercel
 2. Configure build settings:
@@ -32,6 +111,8 @@ This project is optimized for Vercel deployment:
 3. Environment Variables: None required (all games are static files)
 
 4. Deploy! 🎉
+
+**Note:** For Vercel deployment, the `output: 'export'` setting in `next.config.js` can be removed for server-side features.
 
 **IMPORTANT:** The `setup.sh` script must run before build to copy static game files to the `public/` directory.
 
