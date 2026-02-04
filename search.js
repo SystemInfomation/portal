@@ -13,11 +13,14 @@ function createItemElement(item) {
         card.classList.add('hoverable');
     }
     
+    const faviconPath = item.url + 'favicon.png';
     card.innerHTML = `
-        <div class="game-icon" title="${item.name}">${item.icon || '🎮'}</div>
+        <div class="game-icon" title="${item.name}">
+            <img src="${faviconPath}" alt="${item.name} icon" style="width:56px;height:56px;border-radius:12px;box-shadow:0 2px 8px rgba(59,130,246,0.13);background:#222;object-fit:cover;" />
+        </div>
         <div class="game-info">
-            <h3 class="game-title">${item.icon || '🎮'}</h3>
-            <span class="game-category">${item.name}</span>
+            <h3 class="game-title">${item.name}</h3>
+            <span class="game-category">${item.category || ''}</span>
         </div>
         <div class="play-button">
             <i class="fas fa-play"></i>
