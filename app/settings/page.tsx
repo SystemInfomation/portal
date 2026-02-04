@@ -1,8 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Settings as SettingsIcon, Info } from 'lucide-react'
+import { Settings as SettingsIcon } from 'lucide-react'
 import { TabCloak } from '@/components/TabCloak'
+import { GameSuggestionForm } from '@/components/GameSuggestionForm'
 
 export default function SettingsPage() {
   return (
@@ -29,59 +30,8 @@ export default function SettingsPage() {
         {/* Tab Cloaking Section */}
         <TabCloak />
 
-        {/* About Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="glass rounded-2xl border border-border p-8 space-y-4"
-        >
-          <div className="flex items-center gap-3">
-            <Info className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-bold text-primary">About</h2>
-          </div>
-          
-          <div className="space-y-4 text-muted-foreground">
-            <p>
-              <strong className="text-foreground">Forsyth Games Portal</strong> is a modern, curated gaming platform 
-              built with Next.js 14+ and React. We provide a fast, safe, and enjoyable experience for playing 
-              HTML5 games.
-            </p>
-            
-            <div className="grid md:grid-cols-2 gap-4 pt-4">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-foreground">Features</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
-                  <li>Dark mode by default</li>
-                  <li>Premium UI/UX design</li>
-                  <li>112+ games</li>
-                  <li>Fast search & filtering</li>
-                  <li>Responsive on all devices</li>
-                </ul>
-              </div>
-              
-              <div className="space-y-2">
-                <h3 className="font-semibold text-foreground">Technology</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
-                  <li>Next.js 14+ (App Router)</li>
-                  <li>React 19</li>
-                  <li>Tailwind CSS</li>
-                  <li>Framer Motion</li>
-                  <li>TypeScript</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border">
-              <p className="text-sm">
-                <strong className="text-foreground">Version:</strong> 5.0.0
-              </p>
-              <p className="text-sm mt-1">
-                <strong className="text-foreground">Created by:</strong> Celestium Online Team
-              </p>
-            </div>
-          </div>
-        </motion.section>
+        {/* Game Suggestions Section */}
+        <GameSuggestionForm />
 
         {/* Privacy Section */}
         <motion.section
