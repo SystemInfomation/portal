@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Loader2, Maximize, RefreshCw } from 'lucide-react'
 import { games } from '@/data/games'
 import { utilities } from '@/data/utilities'
+import { Game, Utility } from '@/lib/types'
 
 interface PlayPageClientProps {
   slug: string
@@ -14,13 +15,13 @@ interface PlayPageClientProps {
 export default function PlayPageClient({ slug }: PlayPageClientProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [item, setItem] = useState<any>(null)
+  const [item, setItem] = useState<Game | Utility | null>(null)
 
   useEffect(() => {
     // Find the game or utility
     const game = games.find(g => g.id === slug)
     const utility = utilities.find(u => u.id === slug)
-    setItem(game || utility)
+    setItem(game || utility || null)
   }, [slug])
 
   const handleFullscreen = () => {

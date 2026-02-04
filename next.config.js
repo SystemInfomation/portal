@@ -6,7 +6,7 @@ const nextConfig = {
   // GitHub Pages serves from /<repo-name>/ path
   // Set to empty string if using custom domain or root deployment
   basePath: process.env.GITHUB_PAGES === 'true' ? '/portal' : '',
-  assetPrefix: process.env.GITHUB_PAGES === 'true' ? '/portal/' : '',
+  assetPrefix: process.env.GITHUB_PAGES === 'true' ? '/portal' : '',
   
   images: {
     // Required for static export
