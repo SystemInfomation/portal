@@ -64,7 +64,7 @@ export function GameSuggestionForm() {
       </div>
       
       <p className="text-muted-foreground text-sm">
-        Have a game you'd like to see added to the portal? Let us know!
+        Have a game you&apos;d like to see added to the portal? Let us know!
       </p>
 
       <form onSubmit={onSubmit} className="space-y-4 mt-6">

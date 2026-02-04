@@ -11,6 +11,7 @@ interface CloakOption {
   name: string
   title: string
   icon: string
+  backgroundColor: string
 }
 
 const CLOAK_OPTIONS: CloakOption[] = [
@@ -18,31 +19,36 @@ const CLOAK_OPTIONS: CloakOption[] = [
     id: 'google-drive',
     name: 'Google Drive',
     title: 'My Drive - Google Drive',
-    icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgPhsxRI-t33a1g_wvkRX5IhEKUB-2lHfQ5A&s'
+    icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgPhsxRI-t33a1g_wvkRX5IhEKUB-2lHfQ5A&s',
+    backgroundColor: '#e3f2fd'
   },
   {
     id: 'canvas',
     name: 'Canvas',
     title: 'Dashboard',
-    icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYWy6tLxBPdE65jokTz4cBuyyNGDkupZVdtg&s'
+    icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYWy6tLxBPdE65jokTz4cBuyyNGDkupZVdtg&s',
+    backgroundColor: '#ffebee'
   },
   {
     id: 'classlink',
     name: 'Classlink',
     title: 'ClassLink LaunchPad',
-    icon: 'https://play-lh.googleusercontent.com/ujsa1M8GdT-fo-GfPazpUwgPXVWEOWKUgKZk-SdnUhmcL3opS24MiHe6ypEgqxGpllw'
+    icon: 'https://play-lh.googleusercontent.com/ujsa1M8GdT-fo-GfPazpUwgPXVWEOWKUgKZk-SdnUhmcL3opS24MiHe6ypEgqxGpllw',
+    backgroundColor: '#e1f5fe'
   },
   {
     id: 'linewize',
     name: 'Linewize',
     title: 'Linewize',
-    icon: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/f23cec1c-1e86-4dc3-9e77-ce04c063ef21.jpeg?w=128&h=128&fit=max&dpr=3&auto=format&q=50'
+    icon: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/f23cec1c-1e86-4dc3-9e77-ce04c063ef21.jpeg?w=128&h=128&fit=max&dpr=3&auto=format&q=50',
+    backgroundColor: '#e0f7fa'
   },
   {
     id: 'infinite-campus',
     name: 'Infinite Campus',
     title: 'Campus Portal',
-    icon: 'https://3.files.edl.io/2e70/22/08/03/181301-467a6df0-d6f0-4a65-a41a-cb9e96558e30.png'
+    icon: 'https://3.files.edl.io/2e70/22/08/03/181301-467a6df0-d6f0-4a65-a41a-cb9e96558e30.png',
+    backgroundColor: '#e8f5e9'
   }
 ]
 
@@ -69,8 +75,11 @@ export function TabCloak() {
       if (favicon) {
         favicon.href = DEFAULT_FAVICON
       }
+      // Reset background color
+      document.body.style.backgroundColor = ''
       if (typeof window !== 'undefined') {
         localStorage.removeItem('forsyth-tab-cloak')
+        localStorage.removeItem('forsyth-bg-color')
       }
     } else {
       const option = CLOAK_OPTIONS.find(o => o.id === cloakId)
@@ -86,9 +95,13 @@ export function TabCloak() {
         }
         favicon.href = option.icon
         
+        // Set background color
+        document.body.style.backgroundColor = option.backgroundColor
+        
         // Save to localStorage
         if (typeof window !== 'undefined') {
           localStorage.setItem('forsyth-tab-cloak', cloakId)
+          localStorage.setItem('forsyth-bg-color', option.backgroundColor)
         }
       }
     }

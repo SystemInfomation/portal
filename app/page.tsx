@@ -72,7 +72,7 @@ export default function Home() {
             <span>Play Random Game</span>
           </button>
           <p className="text-sm text-muted-foreground mt-3">
-            Instantly Start a Random Editor's Pick — Try Something New!
+            Instantly Start a Random Editor&apos;s Pick — Try Something New!
           </p>
         </motion.div>
       </motion.section>

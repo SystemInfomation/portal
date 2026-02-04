@@ -41,7 +41,7 @@ export default function PrivacyPage() {
             We do <strong className="text-foreground">not</strong> collect any personally identifiable information. The portal operates with minimal data collection:
           </p>
           <ul className="list-disc list-inside space-y-2 ml-4 text-muted-foreground">
-            <li>Local browser settings (theme preferences, tab cloaking settings) are stored only in your browser's local storage</li>
+            <li>Local browser settings (theme preferences, tab cloaking settings) are stored only in your browser&apos;s local storage</li>
             <li>Game suggestions submitted through our form may include optional name and email if you choose to provide them</li>
             <li>We do not use tracking cookies or analytics</li>
           </ul>

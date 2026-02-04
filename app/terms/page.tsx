@@ -69,7 +69,7 @@ export default function TermsPage() {
           <ul className="list-disc list-inside space-y-2 ml-4 text-muted-foreground">
             <li>Are curated by the Celestrium Online Team</li>
             <li>May be hosted on third-party servers and subject to their own terms</li>
-            <li>Are provided "as is" without warranties of any kind</li>
+            <li>Are provided &quot;as is&quot; without warranties of any kind</li>
             <li>May be added or removed at any time without notice</li>
           </ul>
         </section>
@@ -90,7 +90,7 @@ export default function TermsPage() {
         <section className="space-y-4">
           <h2 className="text-2xl font-bold text-primary">Disclaimers</h2>
           <p className="text-muted-foreground">
-            The portal is provided on an "as is" and "as available" basis. We make no warranties, expressed or implied, regarding:
+            The portal is provided on an &quot;as is&quot; and &quot;as available&quot; basis. We make no warranties, expressed or implied, regarding:
           </p>
           <ul className="list-disc list-inside space-y-2 ml-4 text-muted-foreground">
             <li>The availability, reliability, or accuracy of the portal</li>
