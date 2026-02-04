@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Forsyth Games Portal</title>
         <meta name="app-version" content="4.3.1">
-        <link rel="icon" type="image/x-icon" href="./assets/favicons/favicon.png?login.live.com">
+        <link rel="icon" type="image/x-icon" href="https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
         <style>
@@ -66,67 +66,113 @@
                 100% { transform: translate(10%, 15%) scale(1.1); }
             }
         
-            /* --- Redesigned Navbar with Larger Text --- */
+            /* --- Dynamic Island Navbar --- */
             nav {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%) translateY(0);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 16px 40px; /* Slightly more padding for the larger text */
-                background: var(--card);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                border-bottom: 1px solid var(--glass-border);
+                padding: 12px 24px;
+                background: rgba(15, 15, 15, 0.85);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 50px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
                 flex-shrink: 0;
                 z-index: 1000;
-                transition: all 0.3s ease;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                min-width: 600px;
+                max-width: 800px;
+                width: auto;
+            }
+
+            nav.hidden {
+                transform: translateX(-50%) translateY(-100px);
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            body.dark nav {
+                background: rgba(10, 10, 10, 0.9);
+                border: 1px solid rgba(255, 255, 255, 0.08);
             }
         
             nav .logo {
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                transition: transform 0.2s;
+                transition: all 0.3s ease;
+                padding: 4px;
+                border-radius: 20px;
             }
-        
+
             nav .logo:hover {
-                transform: scale(1.02);
+                transform: scale(1.05);
+                background: rgba(255, 255, 255, 0.1);
             }
-        
+
             .logo-img { 
-                height: 44px; /* Slightly taller for the new layout */
-                display: inline-block; 
-            }
-        
-            nav .links {
-                display: flex;
-                gap: 10px;
+                height: 36px;
+                width: 36px;
+                object-fit: contain;
+                display: inline-block;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                padding: 4px;
+                gap: 4px;
             }
         
             nav .links a {
-                padding: 10px 18px;
-                font-weight: 600;
-                /* Increased from 0.85rem to 0.95rem */
-                font-size: 0.95rem; 
+                padding: 8px 16px;
+                font-weight: 500;
+                font-size: 0.9rem; 
                 text-decoration: none;
-                color: var(--text);
-                border-radius: 12px;
-                transition: all 0.2s;
+                color: rgba(255, 255, 255, 0.8);
+                border-radius: 25px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                opacity: 0.75;
+                gap: 6px;
+                position: relative;
+                overflow: hidden;
             }
         
             nav .links a:hover {
-                opacity: 1;
-                background: rgba(0, 0, 0, 0.04);
-                color: var(--accent);
+                color: #fff;
+                background: rgba(59, 130, 246, 0.3);
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+                transform: translateY(-1px);
+            }
+
+            nav .links a:hover::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+                z-index: -1;
             }
         
+            body.dark nav .links a {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
             body.dark nav .links a:hover {
-                background: rgba(255, 255, 255, 0.05);
+                background: rgba(59, 130, 246, 0.2);
+                color: #fff;
             }
         
+            /* --- Body Layout Adjustment for Fixed Navbar --- */
+            body {
+                padding-top: 100px;
+            }
+
             /* --- Iframe & Game Layout --- */
             #pageIframe {
                 width: 100%;
@@ -192,7 +238,7 @@
     <body class="dark">
         
         <nav role="navigation">
-            <div class="logo" id="logoBtn"><img id="logoImg" src="https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png" alt="Forsyth Games" class="logo-img"></div>
+            <div class="logo" id="logoBtn"><img id="logoImg" src="https://upload.wikimedia.org/wikipedia/en/2/2e/ForsythCountySDGAlogo.png" alt="Forsyth Games" class="logo-img"></div>
             <div class="links" id="navLinks">
                 <a href="#" data-page="home"><i class="fas fa-home"></i> Home</a>
                 <a href="gam3s.html" onclick="window.location.href='gam3s.html'; return false;"><i class="fas fa-gamepad"></i> Games</a>
@@ -240,7 +286,7 @@
 
                 // Apply saved theme on load
                 document.body.className = currentTheme;
-                logo.src = currentTheme === 'dark' ? './assets/logos/logo-dark.png?login.live.com' : './assets/logos/logo-light.png?login.live.com';
+                logo.src = currentTheme === 'dark' ? 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png' : './assets/logos/logo-light.png?login.live.com';
 
                 // Apply saved tab title on load
                 const savedTitle = localStorage.getItem('celestrium-tab-title');
@@ -284,7 +330,7 @@
                         currentTheme = e.data.theme;
                         localStorage.setItem('celestrium-theme', currentTheme);
                         document.body.className = currentTheme;
-                        logo.src = currentTheme === 'dark' ? './assets/logos/logo-dark.png?login.live.com' : './assets/logos/logo-light.png?login.live.com';
+                        logo.src = currentTheme === 'dark' ? 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png' : './assets/logos/logo-light.png?login.live.com';
                         // Broadcast to all iframes
                         if (pageIframe) pageIframe.contentWindow.postMessage({type: 'themeChange', theme: currentTheme}, '*');
                         if (gameIframe) gameIframe.contentWindow.postMessage({type: 'themeChange', theme: currentTheme}, '*');
@@ -384,6 +430,55 @@
                         nav.style.display = 'flex';
                         fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
                         fullscreenBtn.title = 'Toggle Fullscreen';
+                    }
+                });
+
+                // Auto-hide navbar on scroll
+                let lastScrollY = 0;
+                let navHideTimeout;
+                const nav = document.querySelector('nav');
+                
+                function handleScroll() {
+                    const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+                    const isScrollingDown = currentScrollY > lastScrollY;
+                    const isAtTop = currentScrollY < 50;
+                    
+                    // Clear any existing timeout
+                    clearTimeout(navHideTimeout);
+                    
+                    if (isScrollingDown && !isAtTop && !isFullscreen) {
+                        // Hide navbar when scrolling down (except when at top)
+                        nav.classList.add('hidden');
+                    } else if (!isScrollingDown || isAtTop) {
+                        // Show navbar when scrolling up or at top
+                        nav.classList.remove('hidden');
+                    }
+                    
+                    // Auto-show navbar after 3 seconds of no scrolling
+                    if (!isAtTop && !isFullscreen) {
+                        navHideTimeout = setTimeout(() => {
+                            nav.classList.remove('hidden');
+                        }, 3000);
+                    }
+                    
+                    lastScrollY = currentScrollY;
+                }
+                
+                // Throttle scroll events for better performance
+                let scrollTimeout;
+                window.addEventListener('scroll', () => {
+                    if (!scrollTimeout) {
+                        scrollTimeout = setTimeout(() => {
+                            handleScroll();
+                            scrollTimeout = null;
+                        }, 10);
+                    }
+                });
+                
+                // Show navbar on mouse near top of screen
+                document.addEventListener('mousemove', (e) => {
+                    if (e.clientY < 100 && !isFullscreen) {
+                        nav.classList.remove('hidden');
                     }
                 });
 

@@ -5,16 +5,30 @@ const debounce = (fn, wait=120) => {
 };
 
 function createItemElement(item) {
-    const a = document.createElement('a');
-    a.className = 'item';
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    
     // Apply hoverable class if animations are enabled
     if (localStorage.getItem('forsyth-animations') !== 'false') {
-        a.classList.add('hoverable');
+        card.classList.add('hoverable');
     }
-    a.href = '#';
-    a.textContent = item.name;
-    a.dataset.url = item.url + '?login.live.com';
-    return a;
+    
+    card.innerHTML = `
+        <div class="game-icon">${item.icon || '🎮'}</div>
+        <div class="game-info">
+            <h3 class="game-title">${item.name}</h3>
+            <span class="game-category">${item.category || 'Game'}</span>
+        </div>
+        <div class="play-button">
+            <i class="fas fa-play"></i>
+        </div>
+    `;
+    
+    card.addEventListener('click', () => {
+        openItem(item.url + '?login.live.com');
+    });
+    
+    return card;
 }
 
 function renderItems(items, searchEl, listEl, noResultsEl) {
@@ -23,11 +37,45 @@ function renderItems(items, searchEl, listEl, noResultsEl) {
     const frag = document.createDocumentFragment();
     let count = 0;
 
+    // Group games by category for better organization
+    const categorizedItems = {};
+    
     for (const item of items) {
         if (item.name.toLowerCase().includes(q)) {
-            frag.appendChild(createItemElement(item));
+            const category = item.category || 'Other';
+            if (!categorizedItems[category]) {
+                categorizedItems[category] = [];
+            }
+            categorizedItems[category].push(item);
             count++;
         }
+    }
+
+    // Sort categories and create sections
+    const categories = Object.keys(categorizedItems).sort();
+    
+    if (count > 0) {
+        categories.forEach(category => {
+            if (q === '' || categorizedItems[category].length > 0) {
+                // Create category header only if there's a search query or items
+                if (q === '' && categories.length > 1) {
+                    const categoryHeader = document.createElement('div');
+                    categoryHeader.className = 'category-header';
+                    categoryHeader.textContent = category;
+                    frag.appendChild(categoryHeader);
+                }
+                
+                // Create games grid for this category
+                const gamesGrid = document.createElement('div');
+                gamesGrid.className = 'games-grid';
+                
+                categorizedItems[category].forEach(item => {
+                    gamesGrid.appendChild(createItemElement(item));
+                });
+                
+                frag.appendChild(gamesGrid);
+            }
+        });
     }
 
     listEl.appendChild(frag);
@@ -39,7 +87,7 @@ function openItem(url) {
 }
 
 function toggleAnimations(enabled) {
-    const items = document.querySelectorAll('.item');
+    const items = document.querySelectorAll('.game-card');
     items.forEach(item => {
         if (enabled) {
             item.classList.add('hoverable');
@@ -53,13 +101,6 @@ function initializeSearch(items, searchEl, listEl, noResultsEl) {
     function render() {
         renderItems(items, searchEl, listEl, noResultsEl);
     }
-
-    listEl.addEventListener('click', e => {
-        const a = e.target.closest && e.target.closest('.item');
-        if (!a) return;
-        e.preventDefault();
-        openItem(a.dataset.url);
-    });
 
     searchEl.addEventListener('input', debounce(render));
     render();
