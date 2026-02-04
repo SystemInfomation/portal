@@ -63,7 +63,6 @@ export function GameSuggestionForm() {
     setResult("Sending....")
     
     const formData = new FormData(event.target as HTMLFormElement)
-    formData.append("access_key", "e93c5755-8acb-4e64-872b-2ba9d3b00e54")
     formData.append("h-captcha-response", captchaToken)
 
     try {
@@ -73,6 +72,10 @@ export function GameSuggestionForm() {
       })
 
       const data = await response.json()
+      
+      // Log the response for debugging
+      console.log("Web3Forms Response:", data)
+      console.log("Response status:", response.status)
       
       if (data.success) {
         setResult("Game suggestion submitted successfully! Thank you!")
@@ -96,7 +99,7 @@ export function GameSuggestionForm() {
         }, 1000)
       } else {
         console.error("Form submission failed:", data)
-        setResult(data.message || "Error submitting form. Please try again.")
+        setResult(`Error: ${data.message || "Unknown error occurred. Please try again."}`)
       }
     } catch (error) {
       console.error("Form submission error:", error)
@@ -123,6 +126,11 @@ export function GameSuggestionForm() {
       </p>
 
       <form onSubmit={onSubmit} className="space-y-4 mt-6">
+        {/* Hidden fields for Web3Forms */}
+        <input type="hidden" name="access_key" value="e93c5755-8acb-4e64-872b-2ba9d3b00e54" />
+        <input type="hidden" name="subject" value="New Game Suggestion from Forsyth Games Portal" />
+        <input type="hidden" name="from_name" value="Forsyth Games Portal User" />
+        
         {/* Honeypot field - must be hidden and empty */}
         <input type="checkbox" name="botcheck" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
 

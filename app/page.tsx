@@ -5,6 +5,7 @@ import { Sparkles, Dices } from 'lucide-react'
 import { editorsPicks } from '@/data/editors-picks'
 import { GameCard } from '@/components/GameCard'
 import { Footer } from '@/components/Footer'
+import { BookmarkNotification } from '@/components/BookmarkNotification'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -22,6 +23,8 @@ export default function Home() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-16">
+      <BookmarkNotification />
+      
       {/* Hero Section */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}

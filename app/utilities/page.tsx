@@ -80,7 +80,7 @@ export default function UtilitiesPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.05 * index }}
             >
-              <UtilityCard utility={utility} />
+              <UtilityCard utility={utility} disabled={utility.disabled} />
             </motion.div>
           ))}
         </motion.div>
