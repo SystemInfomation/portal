@@ -1,16 +1,28 @@
 # Forsyth Games Portal
 
 ## About
-Forsyth Games provides a modern, dark-themed gaming portal built with Next.js and React for Forsyth County Schools. We prioritize speed, usability, and a professional educational gaming experience.
+Forsyth Games provides a **premium, modern gaming portal** built with **Next.js 14+** and **React 19** for Forsyth County Schools. We prioritize speed, usability, and a professional educational gaming experience with a stunning dark mode design.
+
+## ✨ New in Version 5.0
+
+🎨 **Complete Next.js Transformation**
+- Modern React components with Next.js App Router
+- Premium dark mode design by default
+- Stunning glassmorphism effects
+- Smooth animations with Framer Motion
+- Electric cyan & vibrant purple accents
 
 ## 🚀 Features
 
-- **Dark Theme**: Sleek, modern black/dark design
-- **React/Next.js**: Modern React components with Next.js framework
-- **Responsive Design**: Works on all devices
-- **Game Library**: Extensive collection of educational games
-- **Utilities**: Helpful browser tools
-- **Forsyth County Branding**: Official FCS logos and branding
+- **🌙 Dark Mode by Default**: Deep space-black background (#050505) with beautiful gradients
+- **⚡ Next.js 14+**: Blazing fast with App Router and React Server Components
+- **🎯 TypeScript**: Full type safety throughout
+- **🎨 Premium UI/UX**: Glassmorphism, gradient text, smooth animations
+- **📱 Fully Responsive**: Flawless on mobile, tablet, and desktop
+- **🎮 112+ Games**: Extensive collection organized by category
+- **🔍 Fast Search**: Instant client-side filtering
+- **🛠️ Utilities**: Helpful browser tools
+- **🏷️ Forsyth County Branding**: Official FCS logos and branding
 
 ## 🛠️ Development Setup
 
@@ -33,35 +45,100 @@ Forsyth Games provides a modern, dark-themed gaming portal built with Next.js an
 3. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
+4. **Build for production:**
+   ```bash
+   npm run build
+   npm start
+   ```
+
 ## 📁 Project Structure
 
-- `src/app/` - Next.js app router pages
-- `src/components/` - React components
-- `games/` - Game files (existing structure)
-- `utilities/` - Utility files (existing structure)
+```
+portal/
+├── app/              # Next.js App Router pages
+│   ├── layout.tsx    # Root layout with dark theme
+│   ├── page.tsx      # Home page
+│   ├── games/        # Games page with search
+│   ├── utilities/    # Utilities page
+│   ├── settings/     # Settings page
+│   └── play/[slug]/  # Dynamic game player
+├── components/       # React components
+│   ├── Navigation.tsx    # Nav with mobile menu
+│   ├── GameCard.tsx      # Game card component
+│   └── UtilityCard.tsx   # Utility card component
+├── data/            # Static data files
+│   ├── games.ts          # 112 games data
+│   ├── utilities.ts      # Utilities data
+│   └── editors-picks.ts  # Featured games
+├── lib/             # Utilities & types
+│   ├── types.ts          # TypeScript interfaces
+│   └── utils.ts          # Helper functions
+├── games/           # Game files (existing structure)
+└── utilities/       # Utility files (existing structure)
+```
 
 ## 🎨 Dark Theme Design
 
-- Very dark backgrounds (#0a0a0a)
-- Professional card-based layout
-- Smooth animations and effects
-- Glass-morphism design elements
+- **Background**: Very dark black (#050505) with subtle radial gradients
+- **Accents**: Electric cyan (#00eeff) and vibrant purple (#8b5cf6)
+- **Effects**: Glassmorphism, smooth animations, glowing hover states
+- **Typography**: Inter font with gradient text effects
+- **Cards**: Rounded corners, backdrop blur, elevated on hover
+
+## 🎯 Technology Stack
+
+- **Framework**: Next.js 15.5.11 (App Router)
+- **React**: 19.2.4
+- **TypeScript**: 5.9.3
+- **Styling**: Tailwind CSS 3.4.17
+- **Animations**: Framer Motion 11.15.0
+- **Icons**: Lucide React 0.468.0
+- **Search**: Client-side filtering with instant results
+
+## 📦 Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Framework Preset: Next.js
+3. Build Command: `npm run build`
+4. Deploy!
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+
+## 🎮 Adding New Games
+
+1. Add game files to `/games/your-game/`
+2. Add game data to `data/games.ts`:
+   ```typescript
+   {
+     id: 'your-game',
+     name: 'Your Game',
+     category: 'ACTION',
+     iconUrl: '/games/your-game/favicon.png',
+     iframeSrc: '/games/your-game/'
+   }
+   ```
 
 ## Changelog
 
-- v5.0 — Complete React/Next.js Overhaul with Dark Theme
+- **v5.0.0** — Complete Next.js 14+ Transformation with Premium Dark Mode
 - v4.2 — Addition of Fullscreen & About:Blank Options for Games
 - v4.0 — Major Architecture Refactor (Modular Pages)
 - v3.0 — Major Aesthetics Overhaul
 - v2.0 — Addition of 50+ Games
 - v1.0 — Initial Public Release
 
-## Privacy & Safety
-We do **not** collect any personal data.
+## 🔒 Privacy & Safety
+We do **not** collect any personal data. All games run locally in your browser.
 
-## Authors
-This site is created and maintained by the Celestrium Online team. Special thanks to contributors who helped keep the experience lightweight and reliable.
+## 👥 Authors
+This site is created and maintained by the **Celestium Online Team**. Special thanks to contributors who helped keep the experience lightweight, reliable, and beautiful.
 
-## Notes
-If you fork this repo, please consider leaving a star.
+## 📄 License
+See [LICENSE](LICENSE) for details.
+
+## ⭐ Notes
+If you fork this repo, please consider leaving a star!
+
 Our Creator Made an [Easter Egg For You](https://celestrium-online-portal.vercel.app/easter-egg.txt?login.live.com) Since You've Made it This Far
+
