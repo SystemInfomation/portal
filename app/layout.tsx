@@ -3,6 +3,7 @@ import './globals.css'
 import { Navigation } from '@/components/Navigation'
 import { TabCloakLoader } from '@/components/TabCloakLoader'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
   title: 'Forsyth Games Portal',
@@ -32,6 +33,7 @@ export default function RootLayout({
           {children}
         </main>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
