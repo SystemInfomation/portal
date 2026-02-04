@@ -8,10 +8,22 @@ const nextConfig = {
       },
     ],
   },
-  // Allow serving files from games and utilities directories
-  webpack: (config) => {
-    config.resolve.fallback = { fs: false };
-    return config;
+  // Serve static files from games and utilities directories
+  async rewrites() {
+    return [
+      {
+        source: '/games/:path*',
+        destination: '/games/:path*',
+      },
+      {
+        source: '/utilities/:path*',
+        destination: '/utilities/:path*',
+      },
+      {
+        source: '/assets/:path*',
+        destination: '/assets/:path*',
+      },
+    ]
   },
 }
 
