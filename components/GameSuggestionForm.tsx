@@ -3,15 +3,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Gamepad2 } from 'lucide-react'
-import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 const FORM_COOLDOWN_MS = 60000 // 60 seconds
 
 export function GameSuggestionForm() {
   const [result, setResult] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [captchaToken, setCaptchaToken] = useState<string>("")
-  const captchaRef = useRef<HCaptcha>(null)
+  // Captcha removed
   const [cooldownRemaining, setCooldownRemaining] = useState(0)
 
   // Check for cooldown on mount
@@ -54,16 +52,13 @@ export function GameSuggestionForm() {
       }
     }
     
-    if (!captchaToken) {
-      setResult("Please complete the captcha verification")
-      return
-    }
+    // No captcha required
     
     setIsSubmitting(true)
     setResult("Sending....")
     
     const formData = new FormData(event.target as HTMLFormElement)
-    formData.append("h-captcha-response", captchaToken)
+    // No captcha field needed
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -80,8 +75,6 @@ export function GameSuggestionForm() {
       if (data.success) {
         setResult("Game suggestion submitted successfully! Thank you!")
         ;(event.target as HTMLFormElement).reset()
-        setCaptchaToken("")
-        captchaRef.current?.resetCaptcha()
         
         // Set cooldown
         localStorage.setItem('forsyth-form-last-submit', Date.now().toString())
@@ -150,13 +143,7 @@ export function GameSuggestionForm() {
         </div>
 
         <div className="flex justify-center">
-          <HCaptcha
-            ref={captchaRef}
-            sitekey="50b2fe65-b00b-4b9e-ad62-3ba471098be2"
-            onVerify={(token) => setCaptchaToken(token)}
-            onExpire={() => setCaptchaToken("")}
-            theme="dark"
-          />
+          {/* Captcha removed */}
         </div>
 
         <button

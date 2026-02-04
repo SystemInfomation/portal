@@ -8,13 +8,13 @@ const CLOAK_OPTIONS = [
     id: 'google-drive',
     title: 'My Drive - Google Drive',
     icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgPhsxRI-t33a1g_wvkRX5IhEKUB-2lHfQ5A&s',
-    backgroundColor: '#e3f2fd'
+    backgroundColor: '#ffffff' // white
   },
   {
     id: 'canvas',
     title: 'Dashboard',
     icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYWy6tLxBPdE65jokTz4cBuyyNGDkupZVdtg&s',
-    backgroundColor: '#ffebee'
+    backgroundColor: '#ff0000' // red
   },
   {
     id: 'classlink',
@@ -26,13 +26,13 @@ const CLOAK_OPTIONS = [
     id: 'linewize',
     title: 'Linewize',
     icon: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/f23cec1c-1e86-4dc3-9e77-ce04c063ef21.jpeg?w=128&h=128&fit=max&dpr=3&auto=format&q=50',
-    backgroundColor: '#e0f7fa'
+    backgroundColor: '#2196f3' // blue
   },
   {
     id: 'infinite-campus',
     title: 'Campus Portal',
     icon: 'https://3.files.edl.io/2e70/22/08/03/181301-467a6df0-d6f0-4a65-a41a-cb9e96558e30.png',
-    backgroundColor: '#e8f5e9'
+    backgroundColor: '#43a047' // green
   }
 ]
 

@@ -28,6 +28,15 @@ export default function TermsPage() {
         transition={{ delay: 0.1 }}
         className="glass rounded-2xl border border-border p-8 space-y-6"
       >
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-primary">Teacher Permission Required</h2>
+            <p className="text-muted-foreground">
+              You must obtain explicit permission from your teacher before accessing or using this website. Failure to do so may result in disciplinary action according to your school’s policies. By using this portal without teacher approval, you acknowledge that you may be held responsible for any consequences.
+            </p>
+            <p className="text-muted-foreground">
+              This website does <strong>not</strong> block, bypass, or circumvent any school filters, linewize systems, or strict network policies. If you are able to access this portal, it is because your network allows it, not because the portal bypasses any restrictions.
+            </p>
+          </section>
         <section className="space-y-4">
           <h2 className="text-2xl font-bold text-primary">Agreement to Terms</h2>
           <p className="text-muted-foreground">
