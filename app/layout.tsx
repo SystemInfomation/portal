@@ -16,8 +16,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Forsyth Games Portal',
-  description: 'A Fast, Curated Portal for Playing HTML Games — Built to Be Simple, Safe, & Enjoyable',
+  title: 'Forsyth Educational Portal',
+  description: 'Interactive learning platform for students - Access educational tools, study resources, and collaborative learning materials',
   icons: {
     icon: 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png',
   },
