@@ -1,12 +1,22 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 
 export function TabHider() {
   const [isHidden, setIsHidden] = useState(false)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const pathname = usePathname()
+  
+  // Check if we're on a game page
+  const isGamePage = pathname?.startsWith('/play/') && pathname !== '/play/'
 
   useEffect(() => {
+    // Don't activate tab hider on game pages to prevent accidental freezing during gameplay
+    if (isGamePage) {
+      return
+    }
+
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // Instantly hide when tab loses focus
@@ -41,7 +51,7 @@ export function TabHider() {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [])
+  }, [isGamePage])
 
   if (isHidden) {
     return (
