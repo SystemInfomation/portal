@@ -6,6 +6,8 @@ import { TabCloakLoader } from '@/components/TabCloakLoader'
 import { Protection } from '@/components/Protection'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 import { TabHider } from '@/components/TabHider'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -28,9 +30,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: `!function(){window.semaphore=window.semaphore||[],window.ketch=function(){window.semaphore.push(arguments)};var e=new URLSearchParams(document.location.search),n=document.createElement("script");n.type="text/javascript", n.src="https://global.ketchcdn.com/web/v3/config/forsyth_county_schools/website_smart_tag/boot.js", n.defer=n.async=!0,document.getElementsByTagName("head")[0].appendChild(n)}();` }} />
-      </head>
       <body className={`${inter.className} min-h-screen`}>
         <div className="fixed inset-0 bg-gradient-cosmic -z-10" />
         <Protection />
@@ -41,6 +40,8 @@ export default function RootLayout({
         <main className="pt-24 pb-12 px-4">
           {children}
         </main>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
