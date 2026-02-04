@@ -4,9 +4,9 @@ import { motion } from 'framer-motion'
 import { Sparkles, Dices } from 'lucide-react'
 import { editorsPicks } from '@/data/editors-picks'
 import { GameCard } from '@/components/GameCard'
+import { Footer } from '@/components/Footer'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import Link from 'next/link'
 
 export default function Home() {
   const router = useRouter()
@@ -122,30 +122,7 @@ export default function Home() {
       </motion.section>
 
       {/* Footer */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 0.6 }}
-        className="text-center text-sm text-muted-foreground py-8 border-t border-border space-y-4"
-      >
-        <p>Curated by the Weather Man — Click a Game to Play</p>
-        <div className="flex items-center justify-center gap-4">
-          <Link 
-            href="/privacy/" 
-            className="text-primary hover:text-primary/80 transition-colors underline"
-          >
-            Privacy Policy
-          </Link>
-          <span className="text-muted-foreground">•</span>
-          <Link 
-            href="/terms/" 
-            className="text-primary hover:text-primary/80 transition-colors underline"
-          >
-            Terms of Service
-          </Link>
-        </div>
-        <p>Version 5.0.0 • {new Date().getFullYear()}</p>
-      </motion.footer>
+      <Footer />
     </div>
   )
 }

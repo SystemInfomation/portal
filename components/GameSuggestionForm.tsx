@@ -125,34 +125,6 @@ export function GameSuggestionForm() {
       <form onSubmit={onSubmit} className="space-y-4 mt-6">
         {/* Honeypot field - must be hidden and empty */}
         <input type="checkbox" name="botcheck" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
-        
-        <div className="space-y-2">
-          <label htmlFor="name" className="block text-sm font-medium text-foreground">
-            Your Name <span className="text-muted-foreground text-xs">(optional)</span>
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            className="w-full px-4 py-3 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder-muted-foreground transition-all"
-            placeholder="Enter your name (optional)"
-            disabled={isSubmitting}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium text-foreground">
-            Email Address <span className="text-muted-foreground text-xs">(optional)</span>
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            className="w-full px-4 py-3 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder-muted-foreground transition-all"
-            placeholder="your.email@example.com (optional)"
-            disabled={isSubmitting}
-          />
-        </div>
 
         <div className="space-y-2">
           <label htmlFor="message" className="block text-sm font-medium text-foreground">
