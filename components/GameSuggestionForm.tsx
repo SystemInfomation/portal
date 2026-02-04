@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { Gamepad2 } from 'lucide-react'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 
+const FORM_COOLDOWN_MS = 60000 // 60 seconds
+
 export function GameSuggestionForm() {
   const [result, setResult] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -17,15 +19,14 @@ export function GameSuggestionForm() {
     const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
     if (lastSubmission) {
       const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
-      const cooldownPeriod = 60000 // 60 seconds
       
-      if (timeSinceSubmit < cooldownPeriod) {
-        const remaining = Math.ceil((cooldownPeriod - timeSinceSubmit) / 1000)
+      if (timeSinceSubmit < FORM_COOLDOWN_MS) {
+        const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
         setCooldownRemaining(remaining)
         
         // Start countdown
         const interval = setInterval(() => {
-          const newRemaining = Math.ceil((cooldownPeriod - (Date.now() - parseInt(lastSubmission))) / 1000)
+          const newRemaining = Math.ceil((FORM_COOLDOWN_MS - (Date.now() - parseInt(lastSubmission))) / 1000)
           if (newRemaining <= 0) {
             setCooldownRemaining(0)
             clearInterval(interval)
@@ -46,8 +47,8 @@ export function GameSuggestionForm() {
     const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
     if (lastSubmission) {
       const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
-      if (timeSinceSubmit < 60000) { // 60 seconds cooldown
-        const remaining = Math.ceil((60000 - timeSinceSubmit) / 1000)
+      if (timeSinceSubmit < FORM_COOLDOWN_MS) {
+        const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
         setResult(`Please wait ${remaining} seconds before submitting another suggestion.`)
         return
       }
@@ -123,7 +124,7 @@ export function GameSuggestionForm() {
 
       <form onSubmit={onSubmit} className="space-y-4 mt-6">
         {/* Honeypot field - must be hidden and empty */}
-        <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+        <input type="checkbox" name="botcheck" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
         
         <div className="space-y-2">
           <label htmlFor="name" className="block text-sm font-medium text-foreground">

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Globe } from 'lucide-react'
 
 const DEFAULT_FAVICON = 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png'
+const CLOAK_COOLDOWN_MS = 3000 // 3 seconds
 
 interface CloakOption {
   id: string
@@ -71,8 +72,8 @@ export function TabCloak() {
     const lastChange = localStorage.getItem('forsyth-cloak-last-change')
     if (lastChange) {
       const timeSinceChange = Date.now() - parseInt(lastChange)
-      if (timeSinceChange < 3000) { // 3 seconds cooldown
-        const remaining = Math.ceil((3000 - timeSinceChange) / 1000)
+      if (timeSinceChange < CLOAK_COOLDOWN_MS) {
+        const remaining = Math.ceil((CLOAK_COOLDOWN_MS - timeSinceChange) / 1000)
         setCooldownRemaining(remaining)
         
         // Start countdown
