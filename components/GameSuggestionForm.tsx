@@ -1,18 +1,58 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Gamepad2 } from 'lucide-react'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
+
+const FORM_COOLDOWN_MS = 60000 // 60 seconds
 
 export function GameSuggestionForm() {
   const [result, setResult] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [captchaToken, setCaptchaToken] = useState<string>("")
   const captchaRef = useRef<HCaptcha>(null)
+  const [cooldownRemaining, setCooldownRemaining] = useState(0)
+
+  // Check for cooldown on mount
+  useEffect(() => {
+    const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
+    if (lastSubmission) {
+      const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
+      
+      if (timeSinceSubmit < FORM_COOLDOWN_MS) {
+        const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
+        setCooldownRemaining(remaining)
+        
+        // Start countdown
+        const interval = setInterval(() => {
+          const newRemaining = Math.ceil((FORM_COOLDOWN_MS - (Date.now() - parseInt(lastSubmission))) / 1000)
+          if (newRemaining <= 0) {
+            setCooldownRemaining(0)
+            clearInterval(interval)
+          } else {
+            setCooldownRemaining(newRemaining)
+          }
+        }, 1000)
+        
+        return () => clearInterval(interval)
+      }
+    }
+  }, [])
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    
+    // Check rate limit
+    const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
+    if (lastSubmission) {
+      const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
+      if (timeSinceSubmit < FORM_COOLDOWN_MS) {
+        const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
+        setResult(`Please wait ${remaining} seconds before submitting another suggestion.`)
+        return
+      }
+    }
     
     if (!captchaToken) {
       setResult("Please complete the captcha verification")
@@ -25,7 +65,6 @@ export function GameSuggestionForm() {
     const formData = new FormData(event.target as HTMLFormElement)
     formData.append("access_key", "e93c5755-8acb-4e64-872b-2ba9d3b00e54")
     formData.append("h-captcha-response", captchaToken)
-    formData.append("botcheck", captchaToken)
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -40,6 +79,21 @@ export function GameSuggestionForm() {
         ;(event.target as HTMLFormElement).reset()
         setCaptchaToken("")
         captchaRef.current?.resetCaptcha()
+        
+        // Set cooldown
+        localStorage.setItem('forsyth-form-last-submit', Date.now().toString())
+        setCooldownRemaining(60)
+        
+        // Start countdown
+        const interval = setInterval(() => {
+          setCooldownRemaining(prev => {
+            if (prev <= 1) {
+              clearInterval(interval)
+              return 0
+            }
+            return prev - 1
+          })
+        }, 1000)
       } else {
         console.error("Form submission failed:", data)
         setResult(data.message || "Error submitting form. Please try again.")
@@ -65,36 +119,37 @@ export function GameSuggestionForm() {
       </div>
       
       <p className="text-muted-foreground text-sm">
-        Have a game you'd like to see added to the portal? Let us know!
+        Have a game you&apos;d like to see added to the portal? Let us know!
       </p>
 
       <form onSubmit={onSubmit} className="space-y-4 mt-6">
+        {/* Honeypot field - must be hidden and empty */}
+        <input type="checkbox" name="botcheck" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+        
         <div className="space-y-2">
           <label htmlFor="name" className="block text-sm font-medium text-foreground">
-            Your Name
+            Your Name <span className="text-muted-foreground text-xs">(optional)</span>
           </label>
           <input
             type="text"
             id="name"
             name="name"
-            required
             className="w-full px-4 py-3 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder-muted-foreground transition-all"
-            placeholder="Enter your name"
+            placeholder="Enter your name (optional)"
             disabled={isSubmitting}
           />
         </div>
 
         <div className="space-y-2">
           <label htmlFor="email" className="block text-sm font-medium text-foreground">
-            Email Address
+            Email Address <span className="text-muted-foreground text-xs">(optional)</span>
           </label>
           <input
             type="email"
             id="email"
             name="email"
-            required
             className="w-full px-4 py-3 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder-muted-foreground transition-all"
-            placeholder="your.email@example.com"
+            placeholder="your.email@example.com (optional)"
             disabled={isSubmitting}
           />
         </div>
@@ -126,10 +181,14 @@ export function GameSuggestionForm() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || cooldownRemaining > 0}
           className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Submitting..." : "Submit Suggestion"}
+          {cooldownRemaining > 0 
+            ? `Please wait ${cooldownRemaining}s` 
+            : isSubmitting 
+              ? "Submitting..." 
+              : "Submit Suggestion"}
         </button>
 
         {result && (

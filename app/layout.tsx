@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Navigation } from '@/components/Navigation'
 import { TabCloakLoader } from '@/components/TabCloakLoader'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   title: 'Forsyth Games Portal',
@@ -30,6 +31,7 @@ export default function RootLayout({
         <main className="pt-24 pb-12 px-4">
           {children}
         </main>
+        <Analytics />
       </body>
     </html>
   )

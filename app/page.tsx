@@ -72,7 +72,7 @@ export default function Home() {
             <span>Play Random Game</span>
           </button>
           <p className="text-sm text-muted-foreground mt-3">
-            Instantly Start a Random Editor's Pick — Try Something New!
+            Instantly Start a Random Editor&apos;s Pick — Try Something New!
           </p>
         </motion.div>
       </motion.section>
@@ -116,10 +116,25 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 0.6 }}
-        className="text-center text-sm text-muted-foreground py-8 border-t border-border"
+        className="text-center text-sm text-muted-foreground py-8 border-t border-border space-y-4"
       >
         <p>Curated by the Celestium Online Team — Click a Game to Play</p>
-        <p className="mt-2">Version 5.0.0 • {new Date().getFullYear()}</p>
+        <div className="flex items-center justify-center gap-4">
+          <a 
+            href="/privacy" 
+            className="text-primary hover:text-primary/80 transition-colors underline"
+          >
+            Privacy Policy
+          </a>
+          <span className="text-muted-foreground">•</span>
+          <a 
+            href="/terms" 
+            className="text-primary hover:text-primary/80 transition-colors underline"
+          >
+            Terms of Service
+          </a>
+        </div>
+        <p>Version 5.0.0 • {new Date().getFullYear()}</p>
       </motion.footer>
     </div>
   )
