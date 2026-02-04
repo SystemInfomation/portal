@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forsyth Games | Eaglercraft Online Servers</title>
+    <link rel="icon" type="image/png" href="../favicon.png?login.live.com">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        p { color: var(--text-dim); margin-bottom: 2rem; }
+
+        .server-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .server-item {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .server-item:hover {
+            border-color: var(--accent-color);
+            background: rgba(56, 189, 248, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .server-item:active {
+            transform: scale(0.98);
+        }
+
+        .server-info { text-align: left; }
+        .server-name { display: block; font-weight: 600; }
+        .server-address { font-size: 0.8rem; color: var(--text-dim); font-family: monospace; }
+        
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        /* Visual Confirmation Badge */
+        .copy-badge {
+            position: absolute;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .copy-badge.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-next {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.2s;
+        }
+
+        .btn-next:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Multiplayer Servers</h1>
+        <p>Click a server to <strong>copy its address</strong>. <strong>Save it</strong> before proceeding (You won't be able to just paste it into the game when it asks for a server address)!</p>
+        
+        <div class="server-list">
+            <div class="server-item" onclick="copyServer(this, 'wss://mc.voidsent.net')">
+                <div class="server-info">
+                    <span class="server-name">Voidsent MC</span>
+                    <span class="server-address">wss://mc.voidsent.net</span>
+                </div>
+                <div class="status-container">
+                    <span class="status-dot"></span> Online
+                </div>
+                <div class="copy-badge">Copied!</div>
+            </div>
+
+            <div class="server-item" onclick="copyServer(this, 'wss://web.elysium.lat')">
+                <div class="server-info">
+                    <span class="server-name">Elysium Network</span>
+                    <span class="server-address">wss://web.elysium.lat</span>
+                </div>
+                <div class="status-container">
+                    <span class="status-dot"></span> Online
+                </div>
+                <div class="copy-badge">Copied!</div>
+            </div>
+
+            <div class="server-item" onclick="copyServer(this, 'wss://skeletonmc.eagler.host')">
+                <div class="server-info">
+                    <span class="server-name">SkeletonMC</span>
+                    <span class="server-address">wss://skeletonmc.eagler.host</span>
+                </div>
+                <div class="status-container">
+                    <span class="status-dot"></span> Online
+                </div>
+                <div class="copy-badge">Copied!</div>
+            </div>
+        </div>
+
+        <button class="btn-next" onclick="location.href='../x-1-8-8/?login.live.com'">
+            Continue to EaglercraftX 1.8.8
+        </button>
+    </div>
+
+    <script>
+        function copyServer(element, text) {
+            // Copy to clipboard
+            navigator.clipboard.writeText(text).then(() => {
+                // Find the badge and status text within this specific element
+                const badge = element.querySelector('.copy-badge');
+                const status = element.querySelector('.status-container');
+
+                // Hide status, show badge
+                status.style.opacity = "0";
+                badge.classList.add('show');
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    badge.classList.remove('show');
+                    status.style.opacity = "1";
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

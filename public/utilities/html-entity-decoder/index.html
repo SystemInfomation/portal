@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HTML Entity Decoder</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-strong: #1d4ed8;
+      --shadow: 0 18px 55px rgba(17, 24, 39, 0.08);
+      --radius-lg: 16px;
+      --radius: 10px;
+      --code-bg: #0b1021;
+      --code-fg: #e5e7eb;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card: #111827;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --border: #1f2937;
+        --accent: #60a5fa;
+        --accent-strong: #3b82f6;
+        --shadow: 0 22px 60px rgba(0, 0, 0, 0.55);
+        --code-bg: #0b1021;
+        --code-fg: #e5e7eb;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(96, 165, 250, 0.12), transparent 32%),
+                  radial-gradient(circle at 80% 0%, rgba(99, 102, 241, 0.10), transparent 36%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3.5rem 1rem;
+    }
+
+    .card {
+      width: min(900px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: clamp(1.75rem, 3vw, 2.75rem);
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    header { display: flex; flex-direction: column; gap: 0.35rem; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 3vw, 2.35rem);
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    p.subtitle { margin: 0; color: var(--muted); font-weight: 500; }
+
+    label {
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--accent-strong);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-radius: 999px;
+      padding: 0.15rem 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .control { display: grid; gap: 0.65rem; }
+
+    textarea {
+      width: 100%;
+      font-family: 'Source Code Pro', ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 1rem;
+      line-height: 1.55;
+      padding: 1rem 1.1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--card) 90%, var(--bg));
+      color: var(--text);
+      resize: vertical;
+      min-height: 170px;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      overflow: auto;              /* allow scroll if lines are wide */
+      white-space: pre;            /* preserve long lines for horizontal scroll */
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 50%, transparent);
+      background: var(--card);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    button {
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.78rem 1.4rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff;
+      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 32px rgba(37, 99, 235, 0.45); }
+    .btn-primary:active { transform: translateY(0); box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 25%, var(--border));
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .output { display: grid; gap: 0.65rem; }
+
+    .panel {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--card) 92%, var(--bg));
+      padding: 1rem 1.1rem;
+      min-height: 140px;
+      font-family: 'Source Code Pro', ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 1rem;
+      line-height: 1.55;
+      color: var(--text);
+      white-space: pre;            /* preserve long lines */
+      overflow: auto;              /* enable horizontal scrolling */
+      box-shadow: inset 0 1px 1.5px rgba(0, 0, 0, 0.04);
+    }
+
+    .empty-state { color: var(--muted); font-style: italic; }
+
+    .kbd {
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.9rem;
+      padding: 0.12rem 0.35rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 80%, var(--bg));
+      color: var(--text);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .status::before {
+      content: '';
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 2.25rem 1rem; }
+      .card { padding: 1.5rem; }
+      .actions { flex-direction: column; align-items: stretch; }
+      button { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-label="HTML Entity Decoder">
+    <header>
+      <h1>HTML Entity Decoder</h1>
+      <p class="subtitle">Paste text with HTML entities, decode safely, and copy the clean result.</p>
+    </header>
+
+    <section class="control">
+      <label for="inputText">
+        Input
+        <span class="badge">Sanitized</span>
+      </label>
+      <textarea
+        id="inputText"
+        aria-label="Input text area for HTML entity decoding"
+        placeholder="Paste your multiline text here..."
+      ></textarea>
+      <div class="meta">
+        <span id="charCount">0 characters</span>
+        <span class="status" aria-live="polite">Ready to decode</span>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="btn-primary" id="decodeBtn">Decode</button>
+      <button type="button" class="btn-ghost" id="copyBtn">Copy output</button>
+      <button type="button" class="btn-ghost" id="clearBtn">Clear</button>
+      <span class="meta" style="flex:1 1 auto; justify-content:flex-end; color:var(--muted);">
+        Tip: press <span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> to decode
+      </span>
+    </div>
+
+    <section class="output">
+      <label for="output">Decoded output</label>
+      <div id="output" class="panel empty-state" aria-live="polite" aria-label="Decoded output text">
+        Your decoded text will appear here.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const input = document.getElementById('inputText');
+      const output = document.getElementById('output');
+      const decodeBtn = document.getElementById('decodeBtn');
+      const copyBtn = document.getElementById('copyBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const charCount = document.getElementById('charCount');
+      const status = document.querySelector('.status');
+
+      const ENTITY_MAP = {
+        amp: '&',
+        lt: '<',
+        gt: '>',
+        quot: '"',
+        apos: "'",
+        nbsp: '\u00A0',
+      };
+
+      function decodeEntities(str) {
+        return str.replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g, (_, entity) => {
+          if (entity[0] === '#') {
+            const code = entity[1].toLowerCase() === 'x'
+              ? parseInt(entity.slice(2), 16)
+              : parseInt(entity.slice(1), 10);
+            return Number.isFinite(code) ? String.fromCodePoint(code) : _;
+          }
+          return ENTITY_MAP[entity] ?? _;
+        });
+      }
+
+      function setOutput(text) {
+        const trimmed = text.trim();
+        if (!trimmed) {
+          output.textContent = 'Your decoded text will appear here.';
+          output.classList.add('empty-state');
+        } else {
+          output.textContent = text;
+          output.classList.remove('empty-state');
+        }
+      }
+
+      function updateCharCount() {
+        const len = input.value.length;
+        charCount.textContent = `${len.toLocaleString()} character${len === 1 ? '' : 's'}`;
+      }
+
+      function runDecode() {
+        const decoded = decodeEntities(input.value);
+        setOutput(decoded);
+        status.textContent = 'Decoded';
+      }
+
+      function copyOutput() {
+        const text = output.classList.contains('empty-state') ? '' : output.textContent;
+        if (!text) {
+          status.textContent = 'Nothing to copy';
+          return;
+        }
+        navigator.clipboard?.writeText(text).then(() => {
+          status.textContent = 'Copied to clipboard';
+        }).catch(() => {
+          status.textContent = 'Clipboard unavailable';
+        });
+      }
+
+      function clearAll() {
+        input.value = '';
+        setOutput('');
+        updateCharCount();
+        status.textContent = 'Cleared';
+        input.focus();
+      }
+
+      decodeBtn.addEventListener('click', runDecode);
+      copyBtn.addEventListener('click', copyOutput);
+      clearBtn.addEventListener('click', clearAll);
+
+      input.addEventListener('input', () => {
+        updateCharCount();
+        status.textContent = 'Editing…';
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          runDecode();
+        }
+      });
+
+      // Initialize
+      updateCharCount();
+      setOutput('');
+    })();
+  </script>
+</body>
+</html>
