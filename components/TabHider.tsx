@@ -27,30 +27,16 @@ export function TabHider() {
       setIsHidden(false)
     }
 
-    const handleMouseLeave = () => {
-      // Handle mouse leaving the window
-      setIsHidden(true)
-    }
-
-    const handleMouseEnter = () => {
-      // Handle mouse entering the window
-      setIsHidden(false)
-    }
-
     // Add event listeners
     document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('blur', handleBlur)
     window.addEventListener('focus', handleFocus)
-    document.addEventListener('mouseleave', handleMouseLeave)
-    document.addEventListener('mouseenter', handleMouseEnter)
 
     return () => {
       // Clean up event listeners
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('blur', handleBlur)
       window.removeEventListener('focus', handleFocus)
-      document.removeEventListener('mouseleave', handleMouseLeave)
-      document.removeEventListener('mouseenter', handleMouseEnter)
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
