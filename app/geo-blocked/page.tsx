@@ -37,7 +37,7 @@ export default function GeoBlockedPage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 relative overflow-hidden">
       {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-black to-purple-950 animate-gradient-shift" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)]" />
@@ -46,26 +46,25 @@ export default function GeoBlockedPage() {
       <div className="hidden sm:block absolute top-20 left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow" />
       <div className="hidden sm:block absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }} />
 
-      <div className="max-w-4xl w-full space-y-6 sm:space-y-10 relative z-10">
+      <div className="max-w-xl w-full space-y-4 sm:space-y-6 relative z-10 scale-[0.92] sm:scale-100 md:scale-95 lg:scale-90 xl:scale-85 transition-transform duration-300">
         {/* Map/Globe Icon with Animation */}
         <div className="flex justify-center">
           <div className="relative group">
             {/* Glow effect - reduced on mobile */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 blur-xl sm:blur-2xl opacity-50 group-hover:opacity-70 transition-opacity animate-pulse" />
-            
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 blur-lg sm:blur-xl opacity-40 group-hover:opacity-60 transition-opacity animate-pulse" />
             {/* Icon container */}
-            <div className="relative bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-8 sm:p-12 rounded-2xl sm:rounded-3xl border border-blue-500/30 backdrop-blur-xl shadow-2xl">
-              <Globe className="w-20 h-20 sm:w-28 sm:h-28 text-blue-400 animate-bounce-gentle" />
+            <div className="relative bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-blue-500/30 backdrop-blur-xl shadow-2xl">
+              <Globe className="w-14 h-14 sm:w-20 sm:h-20 text-blue-400 animate-bounce-gentle" />
             </div>
           </div>
         </div>
 
         {/* Title with gradient */}
-        <div className="space-y-3 sm:space-y-4 text-center px-2">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent animate-gradient-x leading-tight">
+        <div className="space-y-2 sm:space-y-3 text-center px-1">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent animate-gradient-x leading-tight">
             Geographic Restriction
           </h1>
-          <p className="text-xl sm:text-2xl md:text-3xl text-blue-300 font-bold tracking-wide">
+          <p className="text-lg sm:text-xl md:text-2xl text-blue-300 font-bold tracking-wide">
             🌍 Access Limited to Georgia, United States
           </p>
         </div>
@@ -74,22 +73,22 @@ export default function GeoBlockedPage() {
         <div 
           role="alert"
           aria-live="assertive"
-          className="bg-gradient-to-br from-blue-950/50 to-purple-950/50 border border-blue-500/30 rounded-2xl sm:rounded-3xl p-6 sm:p-10 space-y-6 sm:space-y-8 backdrop-blur-xl shadow-2xl"
+          className="bg-gradient-to-br from-blue-950/50 to-purple-950/50 border border-blue-500/30 rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4 sm:space-y-6 backdrop-blur-xl shadow-2xl"
         >
           {/* Detected location */}
-          <div className="flex items-center justify-center gap-3 sm:gap-4 text-white">
-            <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 flex-shrink-0" />
+          <div className="flex items-center justify-center gap-2 sm:gap-3 text-white">
+            <MapPin className="w-5 h-5 sm:w-7 sm:h-7 text-blue-400 flex-shrink-0" />
             <div className="text-center">
-              <p className="text-xs sm:text-sm text-white/60 uppercase tracking-wider">Detected Location</p>
-              <p className="text-lg sm:text-2xl font-bold">
+              <p className="text-xs sm:text-xs text-white/60 uppercase tracking-wider">Detected Location</p>
+              <p className="text-base sm:text-xl font-bold">
                 {locationInfo.city && `${locationInfo.city}, `}
                 {locationInfo.state && `${locationInfo.state}, `}
                 {locationInfo.country || 'Unknown'}
               </p>
               {locationInfo.isVPN && (
-                <div className="mt-2 flex items-center justify-center gap-2 text-yellow-400">
-                  <AlertTriangle className="w-4 h-4" />
-                  <p className="text-xs sm:text-sm">VPN/Proxy Detected</p>
+                <div className="mt-2 flex items-center justify-center gap-1 text-yellow-400">
+                  <AlertTriangle className="w-3 h-3" />
+                  <p className="text-xs">VPN/Proxy Detected</p>
                 </div>
               )}
             </div>
@@ -98,29 +97,29 @@ export default function GeoBlockedPage() {
           <div className="h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
 
           {/* Message */}
-          <div className="space-y-4 sm:space-y-6 text-center px-2">
-            <p className="text-base sm:text-xl text-white/90 leading-relaxed">
+          <div className="space-y-2 sm:space-y-4 text-center px-1">
+            <p className="text-sm sm:text-base text-white/90 leading-relaxed">
               We&apos;re sorry, but access to this website is restricted to users physically located in Georgia, United States.
             </p>
             
-            <div className="bg-black/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-blue-500/20">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Shield className="w-5 h-5 text-blue-400" />
-                <p className="text-sm sm:text-base text-white/70 font-semibold">
+            <div className="bg-black/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-blue-500/20">
+              <div className="flex items-center justify-center gap-1 mb-2">
+                <Shield className="w-4 h-4 text-blue-400" />
+                <p className="text-xs sm:text-sm text-white/70 font-semibold">
                   Geographic Access Requirements
                 </p>
               </div>
-              <div className="space-y-2 text-left sm:text-center">
-                <p className="text-sm sm:text-base text-white/80">
+              <div className="space-y-1 text-left sm:text-center">
+                <p className="text-xs sm:text-sm text-white/80">
                   ✓ Must be physically located in Georgia, USA
                 </p>
-                <p className="text-sm sm:text-base text-white/80">
+                <p className="text-xs sm:text-sm text-white/80">
                   ✓ IP address must resolve to Georgia location
                 </p>
               </div>
             </div>
 
-            <p className="text-sm sm:text-base text-white/70 leading-relaxed">
+            <p className="text-xs sm:text-sm text-white/70 leading-relaxed">
               This restriction is in place to ensure compliance with educational resource policies and to serve the Forsyth County community.
             </p>
           </div>
@@ -128,15 +127,15 @@ export default function GeoBlockedPage() {
           <div className="h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
 
           {/* Help section */}
-          <div className="text-center space-y-3 sm:space-y-4 px-2">
-            <p className="text-base sm:text-lg font-semibold text-white">
+          <div className="text-center space-y-2 sm:space-y-3 px-1">
+            <p className="text-sm sm:text-base font-semibold text-white">
               Believe this is an error?
             </p>
-            <div className="bg-black/30 rounded-xl p-4 sm:p-5 border border-blue-500/20">
-              <p className="text-sm sm:text-base text-white/80 mb-2">
+            <div className="bg-black/30 rounded-xl p-3 sm:p-4 border border-blue-500/20">
+              <p className="text-xs sm:text-sm text-white/80 mb-1">
                 If you are located in Georgia and seeing this message:
               </p>
-              <ul className="text-sm text-white/70 space-y-1 text-left max-w-md mx-auto">
+              <ul className="text-xs text-white/70 space-y-1 text-left max-w-xs mx-auto">
                 <li>• Check your browser&apos;s location permissions</li>
                 <li>• Try refreshing the page</li>
                 <li>• Clear your browser cache and cookies</li>
@@ -147,11 +146,11 @@ export default function GeoBlockedPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center space-y-2 px-2">
-          <p className="text-white/50 text-xs sm:text-sm">
+        <div className="text-center space-y-1 px-1">
+          <p className="text-white/50 text-[10px] sm:text-xs">
             This geographic restriction ensures proper use of educational resources
           </p>
-          <p className="text-white/30 text-[10px] sm:text-xs">
+          <p className="text-white/30 text-[9px] sm:text-[10px]">
             Protected by multi-layered geolocation verification • Bypass attempts are logged
           </p>
         </div>
