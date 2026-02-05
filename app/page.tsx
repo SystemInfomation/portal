@@ -8,6 +8,21 @@ import { Footer } from '@/components/Footer'
 import { BookmarkNotification } from '@/components/BookmarkNotification'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { GridBackground } from '@/components/ui/grid-background-demo'
+
+// Most popular games get higher weights for better random selection
+const popularGameWeights: Record<string, number> = {
+  'slope': 5,           // Very popular endless runner
+  'subway-surfers-san-francisco': 5,  // Iconic mobile game
+  'retrobowl': 4,       // Highly addictive football game
+  '1v1lol': 4,          // Popular competitive shooter
+  'among-us': 4,        // Cultural phenomenon
+  'snow-rider-3d': 3,   // Fun racing game
+  'cookie-click': 3,    // Classic clicker game
+  'basketball-stars': 2,
+  'monkey-mart': 2,
+  'stumble-guys': 2,
+}
 
 export default function Home() {
   const router = useRouter()
@@ -15,7 +30,17 @@ export default function Home() {
 
   const playRandom = () => {
     setIsRandomizing(true)
-    const randomGame = editorsPicks[Math.floor(Math.random() * editorsPicks.length)]
+    
+    // Create weighted pool of games for better selection
+    const weightedPool: typeof editorsPicks = []
+    editorsPicks.forEach(game => {
+      const weight = popularGameWeights[game.id] || 1
+      for (let i = 0; i < weight; i++) {
+        weightedPool.push(game)
+      }
+    })
+    
+    const randomGame = weightedPool[Math.floor(Math.random() * weightedPool.length)]
     setTimeout(() => {
       router.push(`/play/${randomGame.id}`)
     }, 300)
@@ -23,6 +48,7 @@ export default function Home() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-16">
+      <GridBackground />
       <BookmarkNotification />
       
       {/* Hero Section */}
@@ -90,7 +116,7 @@ export default function Home() {
         </motion.div>
       </motion.section>
 
-      {/* Editor's Picks */}
+      {/* Editor's Picks - Auto-scrolling Carousel */}
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -106,18 +132,33 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="relative">
-          <div className="overflow-x-auto pb-4 scrollbar-hide">
-            <div className="flex gap-6 px-4 min-w-max">
+        <div className="relative overflow-hidden">
+          {/* Gradient fade edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          
+          {/* Scrolling container */}
+          <div className="flex animate-scroll hover:pause-animation">
+            {/* First set of games */}
+            <div className="flex gap-6 px-4 shrink-0">
               {editorsPicks.map((game, index) => (
                 <motion.div
-                  key={game.id}
+                  key={`first-${game.id}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 + index * 0.1, duration: 0.4 }}
+                  className="shrink-0"
                 >
                   <GameCard game={game} />
                 </motion.div>
+              ))}
+            </div>
+            {/* Duplicate set for seamless loop */}
+            <div className="flex gap-6 px-4 shrink-0">
+              {editorsPicks.map((game) => (
+                <div key={`second-${game.id}`} className="shrink-0">
+                  <GameCard game={game} />
+                </div>
               ))}
             </div>
           </div>

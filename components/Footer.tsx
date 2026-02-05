@@ -128,7 +128,15 @@ export function Footer() {
             <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
               <div className="flex flex-col sm:flex-row items-center gap-3 text-sm text-muted-foreground text-center lg:text-left">
                 <span>Made with</span>
-                <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" />
+                <a 
+                  href="https://www.heart.org/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:scale-125 transition-transform"
+                  aria-label="Visit Heart.org"
+                >
+                  <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse cursor-pointer" />
+                </a>
                 <span>by the Weather Man</span>
               </div>
               
