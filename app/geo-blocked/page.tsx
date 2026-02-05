@@ -115,10 +115,7 @@ export default function GeoBlockedPage() {
                   ✓ Must be physically located in Georgia, USA
                 </p>
                 <p className="text-sm sm:text-base text-white/80">
-                  ✓ VPNs and proxies are not permitted
-                </p>
-                <p className="text-sm sm:text-base text-white/80">
-                  ✓ Location verification is required
+                  ✓ IP address must resolve to Georgia location
                 </p>
               </div>
             </div>
@@ -140,7 +137,6 @@ export default function GeoBlockedPage() {
                 If you are located in Georgia and seeing this message:
               </p>
               <ul className="text-sm text-white/70 space-y-1 text-left max-w-md mx-auto">
-                <li>• Disable any VPN or proxy services</li>
                 <li>• Check your browser&apos;s location permissions</li>
                 <li>• Try refreshing the page</li>
                 <li>• Clear your browser cache and cookies</li>

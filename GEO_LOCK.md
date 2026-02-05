@@ -8,46 +8,30 @@ The Forsyth County Portal implements geographic access control to restrict websi
 
 ### Multi-Layer Verification
 
-The GeoLock system uses multiple methods to verify user location:
+The GeoLock system uses IP-based geolocation to verify user location:
 
 1. **IP-Based Geolocation**
    - Primary: ipapi.co API (HTTPS)
    - Backup: ipinfo.io API (HTTPS)
    - Detects location from user's IP address
-   - Identifies VPN/proxy usage via ISP organization names
 
 2. **Geographic Coordinates**
-   - Validates coordinates are within Georgia state bounds
+   - Validates coordinates are within Georgia state bounds (if available)
    - Georgia bounds: 30.36°N to 35°N, -85.61°W to -80.84°W
-
-3. **Timezone Validation**
-   - Confirms timezone matches Eastern Time Zone
-   - Valid timezones: America/New_York, EST, EDT, US/Eastern
-
-4. **Browser Geolocation API**
-   - Optional GPS-based verification
-   - Compares IP location with GPS coordinates
-   - Flags discrepancies >200km as suspicious
-
-5. **VPN/Proxy Detection**
-   - Checks ISP organization names for VPN/proxy keywords
-   - Validates consistency between IP and GPS location
-   - Blocks access if VPN/proxy detected
 
 ### Access Requirements
 
 To access the portal, users must:
 
 ✅ Be physically located in Georgia, United States  
-✅ Have location services enabled (optional but recommended)  
-✅ Not use VPN or proxy services  
-✅ Be in the Eastern Time Zone  
+✅ Have an IP address that resolves to Georgia, US  
 
 ### Caching
 
 - Valid location verification is cached for 1 hour
 - Reduces API calls and improves performance
-- Re-verification occurs automatically after expiration
+- Re-verification occurs automatically when cache expires or page is reloaded
+- No automatic background re-checking to prevent refresh loops
 
 ## User Experience
 
@@ -80,6 +64,8 @@ To access the portal, users must:
 - **Privacy-focused** - Only stores verification status locally
 - **Multiple fallbacks** - Redundant APIs ensure reliability
 - **Security-first** - Blocks on failure, not allows
+- **VPN-friendly** - VPN and proxy usage is permitted
+- **Lightweight** - Simplified validation reduces false positives
 
 ## Troubleshooting
 
@@ -87,21 +73,18 @@ To access the portal, users must:
 
 If you're in Georgia and seeing the blocked page:
 
-1. **Disable VPN/Proxy**
-   - Turn off any VPN or proxy services
-   - Restart your browser
-
-2. **Check Location Permissions**
-   - Allow location access in browser settings
+1. **Check Location Permissions**
+   - Allow location access in browser settings if prompted
    - Reload the page
 
-3. **Clear Cache**
+2. **Clear Cache**
    - Clear browser cache and cookies
    - Specifically clear localStorage
 
-4. **Network Issues**
+3. **Network Issues**
    - Contact network administrator if on school network
    - Try a different network connection
+   - VPN usage is allowed, so this shouldn't cause issues
 
 ### For Administrators
 
@@ -115,21 +98,19 @@ If legitimate users are being blocked:
 
 ### Bypass Prevention
 
-The system implements multiple layers to prevent bypassing:
+The system uses IP-based geolocation with coordinate validation:
 
-- **VPN Detection**: Checks ISP organization names
-- **Proxy Detection**: Identifies hosting/datacenter IPs
-- **GPS Validation**: Compares IP and GPS locations
-- **Coordinate Validation**: Verifies within Georgia bounds
-- **Timezone Validation**: Confirms Eastern Time Zone
+- **State Validation**: Checks if IP resolves to Georgia
+- **Coordinate Validation**: Verifies coordinates are within Georgia bounds (when available)
+- **Multiple APIs**: Uses fallback APIs for reliability
 
 ### Limitations
 
-While the GeoLock provides strong protection, determined users with advanced technical knowledge might attempt to bypass it. For maximum security:
+The GeoLock provides basic geographic access control. For maximum security:
 
 - Monitor access logs for suspicious patterns
 - Consider server-side enforcement if available
-- Regularly update VPN/proxy detection methods
+- This is a lightweight system focused on reducing false positives
 
 ## API Dependencies
 

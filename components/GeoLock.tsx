@@ -6,11 +6,12 @@ import { useRouter, usePathname } from 'next/navigation'
 /**
  * GeoLock Component - Restricts access to users from Georgia, United States only
  * 
- * Multi-layered protection:
+ * Lightweight protection:
  * 1. IP-based geolocation using multiple free APIs
- * 2. Browser Geolocation API for GPS verification
- * 3. VPN/Proxy detection mechanisms
- * 4. Persistent verification with expiration
+ * 2. Coordinate validation (if available)
+ * 3. VPN/Proxy usage is allowed
+ * 4. Persistent verification with 1-hour cache expiration
+ * 5. No automatic background re-checking to prevent refresh loops
  */
 
 interface GeoLocation {
@@ -99,13 +100,8 @@ export function GeoLock() {
 
     checkGeoLocation()
 
-    // Re-check every hour when verification expires
-    // Only start interval if not blocked
-    const interval = setInterval(() => {
-      checkGeoLocation()
-    }, VERIFICATION_EXPIRY)
-    
-    return () => clearInterval(interval)
+    // Note: Automatic re-checking has been removed to prevent refresh loops
+    // Users will be re-verified only when they reload the page or after cache expiry
   }, [router, pathname])
 
   // Render blocking overlay if checking or blocked
@@ -157,14 +153,8 @@ async function performGeoChecks(): Promise<GeoLocation> {
       geoData.lon = data.longitude
       geoData.timezone = data.timezone
       
-      // Check for proxy/VPN indicators
-      if (data.asn && (
-        data.org?.toLowerCase().includes('vpn') ||
-        data.org?.toLowerCase().includes('proxy') ||
-        data.org?.toLowerCase().includes('hosting')
-      )) {
-        geoData.isVPN = true
-      }
+      // VPN/proxy detection removed - VPNs are now allowed
+      // Users can access the site regardless of VPN usage
     }
   } catch (error) {
     console.warn('ipapi.co failed:', error)
@@ -198,65 +188,28 @@ async function performGeoChecks(): Promise<GeoLocation> {
         
         geoData.timezone = data.timezone
         
-        // Check org for VPN/hosting indicators
-        if (data.org && (
-          data.org.toLowerCase().includes('vpn') ||
-          data.org.toLowerCase().includes('proxy') ||
-          data.org.toLowerCase().includes('hosting')
-        )) {
-          geoData.isVPN = true
-        }
+        // VPN/proxy detection removed - VPNs are now allowed
+        // Users can access the site regardless of VPN usage
       }
     } catch (error) {
       console.warn('ipinfo.io failed:', error)
     }
   }
 
-  // Method 3: Browser Geolocation API (GPS-based)
-  // This can help verify location and detect VPN discrepancies
-  try {
-    if (navigator.geolocation) {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          timeout: 5000,
-          maximumAge: 300000, // 5 minutes
-          enableHighAccuracy: false
-        })
-      })
-      
-      // If we have GPS coordinates but they're far from Georgia, it's suspicious
-      if (geoData.lat && geoData.lon) {
-        const distance = calculateDistance(
-          geoData.lat,
-          geoData.lon,
-          position.coords.latitude,
-          position.coords.longitude
-        )
-        
-        // If IP location and GPS are more than 200km apart, flag as suspicious
-        if (distance > 200) {
-          geoData.isVPN = true
-        }
-      }
-    }
-  } catch (error) {
-    // GPS denied or unavailable - not necessarily suspicious
-    console.warn('Geolocation API failed:', error)
-  }
+  // GPS-based validation removed for lighter geo-blocking
+  // This reduces false positives and allows VPN users
 
   return geoData
 }
 
 /**
  * Validate if the detected location is in Georgia, US
+ * Simplified version - lighter and less strict to reduce false positives
  */
 function validateLocation(geoData: GeoLocation): boolean {
-  // If VPN/Proxy detected, block
-  if (geoData.isVPN || geoData.isProxy) {
-    return false
-  }
-
-  // Check country
+  // VPN/Proxy blocking removed - all VPNs are now allowed
+  
+  // Check country (basic check only)
   const isUSA = 
     geoData.country === ALLOWED_COUNTRY ||
     geoData.country === ALLOWED_COUNTRY_CODE ||
@@ -269,7 +222,7 @@ function validateLocation(geoData: GeoLocation): boolean {
     return false
   }
 
-  // Check state/region for Georgia
+  // Check state/region for Georgia (more lenient)
   const isGeorgia = 
     geoData.state === ALLOWED_STATE ||
     geoData.region === ALLOWED_STATE ||
@@ -279,58 +232,20 @@ function validateLocation(geoData: GeoLocation): boolean {
     geoData.region?.toLowerCase() === 'ga'
 
   if (!isGeorgia) {
-    // Additional check: verify coordinates are within Georgia bounds
-    // Georgia approximate bounds: 30.36°N to 35°N, -85.61°W to -80.84°W
+    // Fallback: check if coordinates are within Georgia bounds
+    // This is more lenient than before - allows access if coordinates match
     if (geoData.lat && geoData.lon) {
       const inGeorgiaBounds = 
         geoData.lat >= 30.36 && geoData.lat <= 35.0 &&
         geoData.lon >= -85.61 && geoData.lon <= -80.84
       
-      if (!inGeorgiaBounds) {
-        return false
-      }
-    } else {
-      // No coordinates and state name doesn't match - block
-      return false
+      return inGeorgiaBounds
     }
+    // If no coordinates and state name doesn't match, block
+    return false
   }
 
-  // Additional validation: Check timezone
-  // Georgia is in Eastern Time Zone
-  if (geoData.timezone) {
-    const validTimezones = ['America/New_York', 'EST', 'EDT', 'US/Eastern']
-    const isValidTimezone = validTimezones.some(tz => 
-      geoData.timezone?.includes(tz)
-    )
-    
-    if (!isValidTimezone) {
-      // Timezone doesn't match Georgia - suspicious
-      return false
-    }
-  }
-
-  // All checks passed
+  // Timezone validation removed for lighter geo-blocking
+  // State/country validation passed
   return true
-}
-
-/**
- * Calculate distance between two coordinates in km
- * Uses Haversine formula
- */
-function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371 // Earth's radius in km
-  const dLat = toRad(lat2 - lat1)
-  const dLon = toRad(lon2 - lon1)
-  
-  const a = 
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2)
-  
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  return R * c
-}
-
-function toRad(degrees: number): number {
-  return degrees * (Math.PI / 180)
 }
