@@ -69,28 +69,29 @@ export function TabCloak() {
   }, [])
 
   const applyCloak = (cloakId: string) => {
+    // Ensure we're in a browser environment
+    if (typeof window === 'undefined') return
+    
     // Check rate limit
-    if (typeof window !== 'undefined') {
-      const lastChange = localStorage.getItem('forsyth-cloak-last-change')
-      if (lastChange) {
-        const timeSinceChange = Date.now() - parseInt(lastChange)
-        if (timeSinceChange < CLOAK_COOLDOWN_MS) {
-          const remaining = Math.ceil((CLOAK_COOLDOWN_MS - timeSinceChange) / 1000)
-          setCooldownRemaining(remaining)
-          
-          // Start countdown
-          const interval = setInterval(() => {
-            setCooldownRemaining(prev => {
-              if (prev <= 1) {
-                clearInterval(interval)
-                return 0
-              }
-              return prev - 1
-            })
-          }, 1000)
-          
-          return
-        }
+    const lastChange = localStorage.getItem('forsyth-cloak-last-change')
+    if (lastChange) {
+      const timeSinceChange = Date.now() - parseInt(lastChange)
+      if (timeSinceChange < CLOAK_COOLDOWN_MS) {
+        const remaining = Math.ceil((CLOAK_COOLDOWN_MS - timeSinceChange) / 1000)
+        setCooldownRemaining(remaining)
+        
+        // Start countdown
+        const interval = setInterval(() => {
+          setCooldownRemaining(prev => {
+            if (prev <= 1) {
+              clearInterval(interval)
+              return 0
+            }
+            return prev - 1
+          })
+        }, 1000)
+        
+        return
       }
     }
     
@@ -105,11 +106,9 @@ export function TabCloak() {
       }
       // Reset background color
       document.body.style.backgroundColor = ''
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('forsyth-tab-cloak')
-        localStorage.removeItem('forsyth-bg-color')
-        localStorage.setItem('forsyth-cloak-last-change', Date.now().toString())
-      }
+      localStorage.removeItem('forsyth-tab-cloak')
+      localStorage.removeItem('forsyth-bg-color')
+      localStorage.setItem('forsyth-cloak-last-change', Date.now().toString())
     } else {
       const option = CLOAK_OPTIONS.find(o => o.id === cloakId)
       if (option) {
@@ -128,11 +127,9 @@ export function TabCloak() {
         document.body.style.backgroundColor = option.backgroundColor
         
         // Save to localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('forsyth-tab-cloak', cloakId)
-          localStorage.setItem('forsyth-bg-color', option.backgroundColor)
-          localStorage.setItem('forsyth-cloak-last-change', Date.now().toString())
-        }
+        localStorage.setItem('forsyth-tab-cloak', cloakId)
+        localStorage.setItem('forsyth-bg-color', option.backgroundColor)
+        localStorage.setItem('forsyth-cloak-last-change', Date.now().toString())
       }
     }
   }

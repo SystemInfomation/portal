@@ -87,16 +87,17 @@ export function GameSuggestionForm() {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     
+    // Ensure we're in a browser environment
+    if (typeof window === 'undefined') return
+    
     // Check rate limit
-    if (typeof window !== 'undefined') {
-      const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
-      if (lastSubmission) {
-        const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
-        if (timeSinceSubmit < FORM_COOLDOWN_MS) {
-          const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
-          setResult(`Please wait ${remaining} seconds before submitting another suggestion.`)
-          return
-        }
+    const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
+    if (lastSubmission) {
+      const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
+      if (timeSinceSubmit < FORM_COOLDOWN_MS) {
+        const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
+        setResult(`Please wait ${remaining} seconds before submitting another suggestion.`)
+        return
       }
     }
     
