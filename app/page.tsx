@@ -10,7 +10,6 @@ import { BookmarkNotification } from '@/components/BookmarkNotification'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { GridBackground } from '@/components/ui/grid-background-demo'
-import { WelcomeNotification } from '@/components/WelcomeNotification'
 
 export default function Home() {
   const router = useRouter()
@@ -28,7 +27,6 @@ export default function Home() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-16">
-      <WelcomeNotification />
       <GridBackground />
       <BookmarkNotification />
       
