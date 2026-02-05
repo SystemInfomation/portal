@@ -151,18 +151,19 @@ export function GameSuggestionForm() {
         console.error("Form submission failed:", data)
         setResult(`Error: ${data.message || "Unknown error occurred. Please try again."}`)
         setLastSubmissionSuccess(false)
+        // Reset Turnstile on error to allow retry
+        resetTurnstile()
+        setSubmitEnabled(false)
       }
     } catch (error) {
       console.error("Form submission error:", error)
       setResult("Unable to submit your suggestion. Please check your connection and try again.")
       setLastSubmissionSuccess(false)
+      // Reset Turnstile on error to allow retry
+      resetTurnstile()
+      setSubmitEnabled(false)
     } finally {
       setIsSubmitting(false)
-      // Reset Turnstile on error to allow retry
-      if (!lastSubmissionSuccess) {
-        resetTurnstile()
-        setSubmitEnabled(false)
-      }
     }
   }
 
