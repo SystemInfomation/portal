@@ -8,33 +8,40 @@ const CLOAK_OPTIONS = [
     id: 'google-drive',
     title: 'My Drive - Google Drive',
     icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgPhsxRI-t33a1g_wvkRX5IhEKUB-2lHfQ5A&s',
-    backgroundColor: '#ffffff' // white
+    cssClass: 'cloak-google-drive' // black background with white accents
   },
   {
     id: 'canvas',
     title: 'Dashboard',
     icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYWy6tLxBPdE65jokTz4cBuyyNGDkupZVdtg&s',
-    backgroundColor: '#ff0000' // red
+    cssClass: 'cloak-canvas' // red theme
   },
   {
     id: 'classlink',
     title: 'ClassLink LaunchPad',
     icon: 'https://play-lh.googleusercontent.com/ujsa1M8GdT-fo-GfPazpUwgPXVWEOWKUgKZk-SdnUhmcL3opS24MiHe6ypEgqxGpllw',
-    backgroundColor: '#e1f5fe'
+    cssClass: 'cloak-classlink' // blue theme
   },
   {
     id: 'linewize',
     title: 'Linewize',
     icon: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/f23cec1c-1e86-4dc3-9e77-ce04c063ef21.jpeg?w=128&h=128&fit=max&dpr=3&auto=format&q=50',
-    backgroundColor: '#2196f3' // blue
+    cssClass: 'cloak-linewize' // blue theme
   },
   {
     id: 'infinite-campus',
     title: 'Campus Portal',
     icon: 'https://3.files.edl.io/2e70/22/08/03/181301-467a6df0-d6f0-4a65-a41a-cb9e96558e30.png',
-    backgroundColor: '#43a047' // green
+    cssClass: 'cloak-infinite-campus' // green theme
   }
 ]
+
+// Helper to remove all cloak classes from body
+const removeCloakClasses = () => {
+  CLOAK_OPTIONS.forEach(option => {
+    document.body.classList.remove(option.cssClass)
+  })
+}
 
 export function TabCloakLoader() {
   const pathname = usePathname()
@@ -59,8 +66,9 @@ export function TabCloakLoader() {
         }
         favicon.href = option.icon
         
-        // Apply background color
-        document.body.style.backgroundColor = option.backgroundColor
+        // Remove existing cloak classes and apply the saved one
+        removeCloakClasses()
+        document.body.classList.add(option.cssClass)
       }
     }
   }, [])

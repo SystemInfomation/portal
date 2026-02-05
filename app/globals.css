@@ -90,3 +90,75 @@
     }
   }
 }
+
+/* Tab Cloak Theme Overrides - Outside @layer for higher specificity */
+
+/* Google Drive - Black background with white accents */
+body.cloak-google-drive {
+  background-color: #000000 !important;
+}
+body.cloak-google-drive .text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+body.cloak-google-drive .glass {
+  background: rgba(30, 30, 30, 0.8) !important;
+}
+
+/* Canvas - Red theme */
+body.cloak-canvas {
+  background-color: #1a0000 !important;
+}
+body.cloak-canvas .text-gradient {
+  background: linear-gradient(135deg, #ff4444 0%, #ff8888 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+body.cloak-canvas .glass {
+  background: rgba(40, 20, 20, 0.8) !important;
+}
+
+/* Classlink - Blue theme */
+body.cloak-classlink {
+  background-color: #000a14 !important;
+}
+body.cloak-classlink .text-gradient {
+  background: linear-gradient(135deg, #2196f3 0%, #64b5f6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+body.cloak-classlink .glass {
+  background: rgba(20, 30, 50, 0.8) !important;
+}
+
+/* Linewize - Blue theme (same as Classlink) */
+body.cloak-linewize {
+  background-color: #000a14 !important;
+}
+body.cloak-linewize .text-gradient {
+  background: linear-gradient(135deg, #2196f3 0%, #64b5f6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+body.cloak-linewize .glass {
+  background: rgba(20, 30, 50, 0.8) !important;
+}
+
+/* Infinite Campus - Green theme */
+body.cloak-infinite-campus {
+  background-color: #001a00 !important;
+}
+body.cloak-infinite-campus .text-gradient {
+  background: linear-gradient(135deg, #43a047 0%, #81c784 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+body.cloak-infinite-campus .glass {
+  background: rgba(20, 40, 20, 0.8) !important;
+}

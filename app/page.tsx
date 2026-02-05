@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Sparkles, Dices } from 'lucide-react'
 import { editorsPicks } from '@/data/editors-picks'
+import { games } from '@/data/games'
 import { GameCard } from '@/components/GameCard'
 import { Footer } from '@/components/Footer'
 import { BookmarkNotification } from '@/components/BookmarkNotification'
@@ -11,20 +12,6 @@ import { useState } from 'react'
 import { GridBackground } from '@/components/ui/grid-background-demo'
 import { WelcomeNotification } from '@/components/WelcomeNotification'
 
-// Most popular games get higher weights for better random selection
-const popularGameWeights: Record<string, number> = {
-  'slope': 5,           // Very popular endless runner
-  'subway-surfers-san-francisco': 5,  // Iconic mobile game
-  'retrobowl': 4,       // Highly addictive football game
-  '1v1lol': 4,          // Popular competitive shooter
-  'among-us': 4,        // Cultural phenomenon
-  'snow-rider-3d': 3,   // Fun racing game
-  'cookie-click': 3,    // Classic clicker game
-  'basketball-stars': 2,
-  'monkey-mart': 2,
-  'stumble-guys': 2,
-}
-
 export default function Home() {
   const router = useRouter()
   const [isRandomizing, setIsRandomizing] = useState(false)
@@ -32,16 +19,8 @@ export default function Home() {
   const playRandom = () => {
     setIsRandomizing(true)
     
-    // Create weighted pool of games for better selection
-    const weightedPool: typeof editorsPicks = []
-    editorsPicks.forEach(game => {
-      const weight = popularGameWeights[game.id] || 1
-      for (let i = 0; i < weight; i++) {
-        weightedPool.push(game)
-      }
-    })
-    
-    const randomGame = weightedPool[Math.floor(Math.random() * weightedPool.length)]
+    // Pick any random game from ALL available games
+    const randomGame = games[Math.floor(Math.random() * games.length)]
     setTimeout(() => {
       router.push(`/play/${randomGame.id}`)
     }, 300)
