@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "toastify-js/src/toastify.css";
-
 @layer base {
   * {
     @apply border-border;

@@ -5,6 +5,7 @@ import { Navigation } from '@/components/Navigation'
 import { TabCloakLoader } from '@/components/TabCloakLoader'
 import { Protection } from '@/components/Protection'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
+import { TosNotification } from '@/components/TosNotification'
 import { TabHider } from '@/components/TabHider'
 import { TimeBasedAccessControl } from '@/components/TimeBasedAccessControl'
 import { GeoLock } from '@/components/GeoLock'
@@ -61,6 +62,7 @@ export default function RootLayout({
         <TabCloakLoader />
         <TabHider />
         <AnnouncementBanner />
+        <TosNotification />
         <Navigation />
         <main className="pt-24 pb-12 px-4">
           {children}
