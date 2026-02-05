@@ -100,7 +100,10 @@ export function GeoLock() {
     checkGeoLocation()
 
     // Re-check every hour when verification expires
-    const interval = setInterval(checkGeoLocation, VERIFICATION_EXPIRY)
+    // Only start interval if not blocked
+    const interval = setInterval(() => {
+      checkGeoLocation()
+    }, VERIFICATION_EXPIRY)
     
     return () => clearInterval(interval)
   }, [router, pathname])
@@ -135,9 +138,15 @@ async function performGeoChecks(): Promise<GeoLocation> {
   
   // Method 1: ipapi.co (Free, no API key required)
   try {
+    // Create AbortController for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+    
     const response = await fetch('https://ipapi.co/json/', {
-      signal: AbortSignal.timeout(5000)
+      signal: controller.signal
     })
+    clearTimeout(timeoutId)
+    
     if (response.ok) {
       const data = await response.json()
       geoData.country = data.country_name
@@ -164,9 +173,15 @@ async function performGeoChecks(): Promise<GeoLocation> {
   // Method 2: ipinfo.io (backup, free, no API key required)
   if (!geoData.country) {
     try {
+      // Create AbortController for timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      
       const response = await fetch('https://ipinfo.io/json', {
-        signal: AbortSignal.timeout(5000)
+        signal: controller.signal
       })
+      clearTimeout(timeoutId)
+      
       if (response.ok) {
         const data = await response.json()
         geoData.country = data.country === 'US' ? 'United States' : data.country
@@ -283,7 +298,7 @@ function validateLocation(geoData: GeoLocation): boolean {
   // Additional validation: Check timezone
   // Georgia is in Eastern Time Zone
   if (geoData.timezone) {
-    const validTimezones = ['America/New_York', 'America/Detroit', 'EST', 'EDT', 'US/Eastern']
+    const validTimezones = ['America/New_York', 'EST', 'EDT', 'US/Eastern']
     const isValidTimezone = validTimezones.some(tz => 
       geoData.timezone?.includes(tz)
     )

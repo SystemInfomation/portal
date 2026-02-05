@@ -71,7 +71,11 @@ export default function GeoBlockedPage() {
         </div>
 
         {/* Main message card */}
-        <div className="bg-gradient-to-br from-blue-950/50 to-purple-950/50 border border-blue-500/30 rounded-2xl sm:rounded-3xl p-6 sm:p-10 space-y-6 sm:space-y-8 backdrop-blur-xl shadow-2xl">
+        <div 
+          role="alert"
+          aria-live="assertive"
+          className="bg-gradient-to-br from-blue-950/50 to-purple-950/50 border border-blue-500/30 rounded-2xl sm:rounded-3xl p-6 sm:p-10 space-y-6 sm:space-y-8 backdrop-blur-xl shadow-2xl"
+        >
           {/* Detected location */}
           <div className="flex items-center justify-center gap-3 sm:gap-4 text-white">
             <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 flex-shrink-0" />
