@@ -7,6 +7,7 @@ import { Protection } from '@/components/Protection'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 import { TabHider } from '@/components/TabHider'
 import { TimeBasedAccessControl } from '@/components/TimeBasedAccessControl'
+import { GeoLock } from '@/components/GeoLock'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import CustomAnalytics from '@/components/analytics'
@@ -56,6 +57,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} min-h-screen`}>
         <div className="fixed inset-0 bg-gradient-cosmic -z-10" />
+        <GeoLock />
         <TimeBasedAccessControl />
         <Protection />
         <TabCloakLoader />

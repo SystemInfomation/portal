@@ -23,6 +23,9 @@ Forsyth Games provides a **premium, modern gaming portal** built with **Next.js 
 - **🔍 Fast Search**: Instant client-side filtering
 - **🛠️ Utilities**: Helpful browser tools
 - **🏷️ Forsyth County Branding**: Official FCS logos and branding
+- **🌍 Geographic Access Control**: Restricts access to Georgia, US only (see [GEO_LOCK.md](./GEO_LOCK.md))
+- **⏰ Time-Based Access**: School hours enforcement (6 AM - 5 PM ET)
+- **🛡️ Protection Suite**: Anti-monitoring, VPN detection, and security features
 
 ## 🛠️ Development Setup
 
