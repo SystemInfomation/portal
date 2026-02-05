@@ -40,11 +40,12 @@ export function TimeBasedAccessControl() {
 
       // If blocked and not already on locked page, redirect immediately
       if (blocked && !isOnLockedPage) {
-        router.push('/locked')
+        // Use replace to prevent browser back button from accessing blocked pages
+        router.replace('/locked')
       }
       // If not blocked and on locked page, redirect to home
       else if (!blocked && isOnLockedPage) {
-        router.push('/')
+        router.replace('/')
       }
     }
 

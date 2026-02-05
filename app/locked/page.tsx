@@ -104,7 +104,7 @@ export default function LockedPage() {
             <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-red-400 animate-pulse flex-shrink-0" />
             <div className="text-center">
               <p className="text-xs sm:text-sm text-white/60 uppercase tracking-wider">Current Time</p>
-              <p className="text-lg sm:text-2xl font-bold font-mono break-all">{currentTime}</p>
+              <p className="text-lg sm:text-2xl font-bold font-mono">{currentTime}</p>
             </div>
           </div>
           
@@ -135,7 +135,7 @@ export default function LockedPage() {
               <Unlock className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
               <p className="text-xs sm:text-sm uppercase tracking-wider font-semibold">Next Unlock</p>
             </div>
-            <p className="text-base sm:text-xl font-bold text-white break-words">{nextUnlockTime}</p>
+            <p className="text-base sm:text-xl font-bold text-white">{nextUnlockTime}</p>
             <p className="text-xs sm:text-sm text-white/60">
               The page will automatically redirect when access is restored
             </p>
