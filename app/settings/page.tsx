@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Settings as SettingsIcon } from 'lucide-react'
 import { TabCloak } from '@/components/TabCloak'
 import { GameSuggestionForm } from '@/components/GameSuggestionForm'
+import { TimeRestrictionToggle } from '@/components/TimeRestrictionToggle'
 
 export default function SettingsPage() {
   return (
@@ -29,6 +30,9 @@ export default function SettingsPage() {
       <div className="space-y-6">
         {/* Tab Cloaking Section */}
         <TabCloak />
+
+        {/* Time Restriction Section */}
+        <TimeRestrictionToggle />
 
         {/* Game Suggestions Section */}
         <GameSuggestionForm />

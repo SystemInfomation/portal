@@ -9,6 +9,8 @@ import { useRouter, usePathname } from 'next/navigation'
  * Allowed hours: 6 AM - 5 PM Eastern Time
  * Blocked hours: 5 PM - 6 AM Eastern Time
  * 
+ * Can be disabled via localStorage setting: 'forsyth-time-restriction-enabled'
+ * 
  * Multiple layers of protection:
  * - Immediate redirect on mount
  * - Continuous checking every second
@@ -22,6 +24,24 @@ export function TimeBasedAccessControl() {
 
   useEffect(() => {
     const checkTime = () => {
+      // Check if time restriction is enabled (default: true)
+      const restrictionEnabled = typeof window !== 'undefined' 
+        ? localStorage.getItem('forsyth-time-restriction-enabled') !== 'false'
+        : true
+
+      // If restriction is disabled, don't block anything
+      if (!restrictionEnabled) {
+        setIsBlocked(false)
+        
+        // If we're on the locked page and restriction is disabled, redirect home
+        const normalizedPath = pathname.replace(/\/$/, '')
+        const isOnLockedPage = normalizedPath === '/locked'
+        if (isOnLockedPage) {
+          router.replace('/')
+        }
+        return
+      }
+
       // Get current time in Eastern timezone
       const now = new Date()
       const easternTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
