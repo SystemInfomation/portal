@@ -70,25 +70,27 @@ export function TabCloak() {
 
   const applyCloak = (cloakId: string) => {
     // Check rate limit
-    const lastChange = localStorage.getItem('forsyth-cloak-last-change')
-    if (lastChange) {
-      const timeSinceChange = Date.now() - parseInt(lastChange)
-      if (timeSinceChange < CLOAK_COOLDOWN_MS) {
-        const remaining = Math.ceil((CLOAK_COOLDOWN_MS - timeSinceChange) / 1000)
-        setCooldownRemaining(remaining)
-        
-        // Start countdown
-        const interval = setInterval(() => {
-          setCooldownRemaining(prev => {
-            if (prev <= 1) {
-              clearInterval(interval)
-              return 0
-            }
-            return prev - 1
-          })
-        }, 1000)
-        
-        return
+    if (typeof window !== 'undefined') {
+      const lastChange = localStorage.getItem('forsyth-cloak-last-change')
+      if (lastChange) {
+        const timeSinceChange = Date.now() - parseInt(lastChange)
+        if (timeSinceChange < CLOAK_COOLDOWN_MS) {
+          const remaining = Math.ceil((CLOAK_COOLDOWN_MS - timeSinceChange) / 1000)
+          setCooldownRemaining(remaining)
+          
+          // Start countdown
+          const interval = setInterval(() => {
+            setCooldownRemaining(prev => {
+              if (prev <= 1) {
+                clearInterval(interval)
+                return 0
+              }
+              return prev - 1
+            })
+          }, 1000)
+          
+          return
+        }
       }
     }
     

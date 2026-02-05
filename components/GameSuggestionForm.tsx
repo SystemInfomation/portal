@@ -58,26 +58,28 @@ export function GameSuggestionForm() {
 
   // Check for cooldown on mount
   useEffect(() => {
-    const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
-    if (lastSubmission) {
-      const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
-      
-      if (timeSinceSubmit < FORM_COOLDOWN_MS) {
-        const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
-        setCooldownRemaining(remaining)
+    if (typeof window !== 'undefined') {
+      const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
+      if (lastSubmission) {
+        const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
         
-        // Start countdown
-        const interval = setInterval(() => {
-          const newRemaining = Math.ceil((FORM_COOLDOWN_MS - (Date.now() - parseInt(lastSubmission))) / 1000)
-          if (newRemaining <= 0) {
-            setCooldownRemaining(0)
-            clearInterval(interval)
-          } else {
-            setCooldownRemaining(newRemaining)
-          }
-        }, 1000)
-        
-        return () => clearInterval(interval)
+        if (timeSinceSubmit < FORM_COOLDOWN_MS) {
+          const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
+          setCooldownRemaining(remaining)
+          
+          // Start countdown
+          const interval = setInterval(() => {
+            const newRemaining = Math.ceil((FORM_COOLDOWN_MS - (Date.now() - parseInt(lastSubmission))) / 1000)
+            if (newRemaining <= 0) {
+              setCooldownRemaining(0)
+              clearInterval(interval)
+            } else {
+              setCooldownRemaining(newRemaining)
+            }
+          }, 1000)
+          
+          return () => clearInterval(interval)
+        }
       }
     }
   }, [])
@@ -86,13 +88,15 @@ export function GameSuggestionForm() {
     event.preventDefault()
     
     // Check rate limit
-    const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
-    if (lastSubmission) {
-      const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
-      if (timeSinceSubmit < FORM_COOLDOWN_MS) {
-        const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
-        setResult(`Please wait ${remaining} seconds before submitting another suggestion.`)
-        return
+    if (typeof window !== 'undefined') {
+      const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
+      if (lastSubmission) {
+        const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
+        if (timeSinceSubmit < FORM_COOLDOWN_MS) {
+          const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
+          setResult(`Please wait ${remaining} seconds before submitting another suggestion.`)
+          return
+        }
       }
     }
     
