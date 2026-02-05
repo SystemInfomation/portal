@@ -31,14 +31,13 @@ export default function LockedPage() {
         timeZoneName: 'short'
       }))
 
-      // Calculate next unlock time (6 AM)
+      // Calculate next unlock time (7 AM)
       const tomorrow = new Date(easternTime)
-      if (hours >= 17) {
-        // After 5 PM, unlock tomorrow at 6 AM
+      if (hours >= 16) {
+        // After 4 PM, unlock tomorrow at 7 AM
         tomorrow.setDate(tomorrow.getDate() + 1)
       }
-      tomorrow.setHours(6, 0, 0, 0)
-      
+      tomorrow.setHours(7, 0, 0, 0)
       setNextUnlockTime(tomorrow.toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
@@ -48,8 +47,8 @@ export default function LockedPage() {
         day: 'numeric'
       }))
 
-      // If within allowed hours (6 AM - 5 PM), redirect back to home
-      if (hours >= 6 && hours < 17) {
+      // If within allowed hours (7 AM - 4 PM), redirect back to home
+      if (hours >= 7 && hours < 16) {
         router.push('/')
       }
     }
@@ -119,7 +118,7 @@ export default function LockedPage() {
                 This website is only available during:
               </p>
               <p className="text-lg sm:text-xl font-black bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                6:00 AM - 5:00 PM
+                7:00 AM - 4:00 PM
               </p>
               <p className="text-[10px] sm:text-xs text-white/50 mt-1">Eastern Time</p>
             </div>
