@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
 import { games } from '@/data/games'
 import { GameCard } from '@/components/GameCard'
+import { GridBackground } from '@/components/ui/grid-background-demo'
 
 export default function GamesPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -31,6 +32,7 @@ export default function GamesPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
+      <GridBackground />
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
