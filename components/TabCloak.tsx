@@ -13,7 +13,7 @@ interface CloakOption {
   name: string
   title: string
   icon: string
-  backgroundColor: string
+  cssClass: string
 }
 
 const CLOAK_OPTIONS: CloakOption[] = [
@@ -22,37 +22,44 @@ const CLOAK_OPTIONS: CloakOption[] = [
     name: 'Google Drive',
     title: 'My Drive - Google Drive',
     icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgPhsxRI-t33a1g_wvkRX5IhEKUB-2lHfQ5A&s',
-    backgroundColor: '#ffffff' // white
+    cssClass: 'cloak-google-drive' // black background with white accents
   },
   {
     id: 'canvas',
     name: 'Canvas',
     title: 'Dashboard',
     icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYWy6tLxBPdE65jokTz4cBuyyNGDkupZVdtg&s',
-    backgroundColor: '#ff0000' // red
+    cssClass: 'cloak-canvas' // red theme
   },
   {
     id: 'classlink',
     name: 'Classlink',
     title: 'ClassLink LaunchPad',
     icon: 'https://play-lh.googleusercontent.com/ujsa1M8GdT-fo-GfPazpUwgPXVWEOWKUgKZk-SdnUhmcL3opS24MiHe6ypEgqxGpllw',
-    backgroundColor: '#e1f5fe'
+    cssClass: 'cloak-classlink' // blue theme
   },
   {
     id: 'linewize',
     name: 'Linewize',
     title: 'Linewize',
     icon: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/f23cec1c-1e86-4dc3-9e77-ce04c063ef21.jpeg?w=128&h=128&fit=max&dpr=3&auto=format&q=50',
-    backgroundColor: '#2196f3' // blue
+    cssClass: 'cloak-linewize' // blue theme
   },
   {
     id: 'infinite-campus',
     name: 'Infinite Campus',
     title: 'Campus Portal',
     icon: 'https://3.files.edl.io/2e70/22/08/03/181301-467a6df0-d6f0-4a65-a41a-cb9e96558e30.png',
-    backgroundColor: '#43a047' // green
+    cssClass: 'cloak-infinite-campus' // green theme
   }
 ]
+
+// Helper to remove all cloak classes from body
+const removeCloakClasses = () => {
+  CLOAK_OPTIONS.forEach(option => {
+    document.body.classList.remove(option.cssClass)
+  })
+}
 
 export function TabCloak() {
   const [selectedCloak, setSelectedCloak] = useState<string>('none')
@@ -104,10 +111,10 @@ export function TabCloak() {
       if (favicon) {
         favicon.href = DEFAULT_FAVICON
       }
-      // Reset background color
-      document.body.style.backgroundColor = ''
+      // Remove all cloak CSS classes
+      removeCloakClasses()
       localStorage.removeItem('forsyth-tab-cloak')
-      localStorage.removeItem('forsyth-bg-color')
+      localStorage.removeItem('forsyth-bg-color') // Clean up legacy key
       localStorage.setItem('forsyth-cloak-last-change', Date.now().toString())
     } else {
       const option = CLOAK_OPTIONS.find(o => o.id === cloakId)
@@ -123,12 +130,12 @@ export function TabCloak() {
         }
         favicon.href = option.icon
         
-        // Set background color
-        document.body.style.backgroundColor = option.backgroundColor
+        // Remove existing cloak classes and add new one
+        removeCloakClasses()
+        document.body.classList.add(option.cssClass)
         
         // Save to localStorage
         localStorage.setItem('forsyth-tab-cloak', cloakId)
-        localStorage.setItem('forsyth-bg-color', option.backgroundColor)
         localStorage.setItem('forsyth-cloak-last-change', Date.now().toString())
       }
     }

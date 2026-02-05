@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, Copy, Download, Eye, Users, Activity, TrendingUp, RefreshCw, Globe } from 'lucide-react'
+import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, Copy, Download, Eye, Users, Activity, TrendingUp, RefreshCw, Globe, School, BarChart3 } from 'lucide-react'
 import { withBasePath } from '@/lib/utils'
 
 const ADMIN_PASSCODE = '1140' // Admin passcode
@@ -10,6 +10,57 @@ const SESSION_TIMEOUT = 30 * 60 * 1000 // 30 minutes
 const MAX_LOGIN_ATTEMPTS = 3 // Maximum failed attempts
 const LOCKOUT_DURATION = 15 * 60 * 1000 // 15 minutes lockout
 // Removed IP whitelist to allow access from anywhere
+
+// Forsyth County High Schools
+const FORSYTH_SCHOOLS = [
+  'South Forsyth High School',
+  'Lambert High School',
+  'Forsyth Central High School',
+  'West Forsyth High School',
+  'North Forsyth High School',
+  'Denmark High School',
+  'Alliance Academy',
+  'Pinecrest Academy'
+]
+
+// Generate mock visitor data for schools
+const generateSchoolVisitors = (totalVisitors: number) => {
+  const schools: { name: string; visitors: number; percentage: number }[] = []
+  let remaining = totalVisitors
+  
+  // Distribute visitors across schools with realistic variation
+  const shuffledSchools = [...FORSYTH_SCHOOLS].sort(() => Math.random() - 0.5)
+  
+  shuffledSchools.forEach((school, index) => {
+    if (index === shuffledSchools.length - 1) {
+      // Last school gets remaining visitors
+      schools.push({
+        name: school,
+        visitors: remaining,
+        percentage: Math.round((remaining / totalVisitors) * 100)
+      })
+    } else {
+      // Random distribution with weights (some schools more popular)
+      const maxShare = Math.floor(remaining * 0.4) // Max 40% for any school
+      const minShare = Math.floor(remaining * 0.05) // Min 5%
+      const visitors = Math.floor(Math.random() * (maxShare - minShare)) + minShare
+      remaining -= visitors
+      schools.push({
+        name: school,
+        visitors,
+        percentage: Math.round((visitors / totalVisitors) * 100)
+      })
+    }
+  })
+  
+  // Sort by visitors descending
+  return schools.sort((a, b) => b.visitors - a.visitors)
+}
+
+// Generate fluctuating visitor count between 100-500
+const generateVisitorCount = () => {
+  return Math.floor(Math.random() * 401) + 100 // 100-500
+}
 
 
 
@@ -33,6 +84,26 @@ export default function AdminPage() {
   const [userIP, setUserIP] = useState('')
   const [userLocation, setUserLocation] = useState('')
   const [isSecureConnection, setIsSecureConnection] = useState(false)
+
+  // Analytics state
+  const [currentVisitors, setCurrentVisitors] = useState(generateVisitorCount())
+  const [schoolBreakdown, setSchoolBreakdown] = useState(generateSchoolVisitors(generateVisitorCount()))
+  const [lastUpdated, setLastUpdated] = useState(new Date())
+
+  // Update mock analytics every 5 seconds for realistic fluctuation
+  useEffect(() => {
+    if (!isAuthenticated) return
+    
+    const refreshMockAnalytics = () => {
+      const newVisitors = generateVisitorCount()
+      setCurrentVisitors(newVisitors)
+      setSchoolBreakdown(generateSchoolVisitors(newVisitors))
+      setLastUpdated(new Date())
+    }
+    
+    const interval = setInterval(refreshMockAnalytics, 5000)
+    return () => clearInterval(interval)
+  }, [isAuthenticated])
 
   useEffect(() => {
     // Security checks
@@ -355,7 +426,90 @@ export default function AdminPage() {
         <p className="text-muted-foreground">Manage site-wide announcements and view analytics</p>
       </motion.div>
 
+      {/* Live Analytics Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="glass rounded-2xl border border-border p-6 space-y-6"
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-primary" />
+            Live Analytics
+          </h2>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+            <span>Live • Updated {lastUpdated.toLocaleTimeString()}</span>
+          </div>
+        </div>
 
+        {/* Total Visitors Card */}
+        <div className="p-6 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/30">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Current Active Visitors</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl font-black text-foreground">{currentVisitors}</span>
+                <span className="text-sm text-muted-foreground">users online</span>
+              </div>
+            </div>
+            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+              <Users className="w-8 h-8 text-primary" />
+            </div>
+          </div>
+        </div>
+
+        {/* School Breakdown */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <School className="w-5 h-5 text-secondary" />
+            Visitors by Forsyth County School
+          </h3>
+          
+          <div className="grid gap-3">
+            {schoolBreakdown.map((school, index) => (
+              <div key={school.name} className="p-4 rounded-xl bg-background/50 border border-border">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                      index === 0 ? 'bg-yellow-500/20 text-yellow-400' :
+                      index === 1 ? 'bg-gray-400/20 text-gray-400' :
+                      index === 2 ? 'bg-orange-500/20 text-orange-400' :
+                      'bg-muted text-muted-foreground'
+                    }`}>
+                      {index + 1}
+                    </span>
+                    <span className="font-medium text-foreground">{school.name}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-foreground">{school.visitors}</span>
+                    <span className="text-xs text-muted-foreground ml-1">({school.percentage}%)</span>
+                  </div>
+                </div>
+                {/* Progress bar */}
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${school.percentage}%` }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className={`h-full rounded-full ${
+                      index === 0 ? 'bg-gradient-to-r from-primary to-secondary' :
+                      index === 1 ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
+                      index === 2 ? 'bg-gradient-to-r from-purple-500 to-pink-500' :
+                      'bg-gradient-to-r from-gray-500 to-gray-400'
+                    }`}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-xs text-muted-foreground text-center italic">
+          * Analytics data is simulated for demonstration purposes
+        </p>
+      </motion.section>
 
       {/* Current Announcement */}
       <motion.section
