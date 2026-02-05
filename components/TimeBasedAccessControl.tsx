@@ -34,12 +34,17 @@ export function TimeBasedAccessControl() {
 
       setIsBlocked(blocked)
 
+      // Normalize pathname for comparison (remove trailing slash)
+      const normalizedPath = pathname.replace(/\/$/, '')
+      const isOnLockedPage = normalizedPath === '/locked'
+
       // If blocked and not already on locked page, redirect immediately
-      if (blocked && pathname !== '/locked') {
+      if (blocked && !isOnLockedPage) {
+        // Use replace to prevent browser back button from accessing blocked pages
         router.replace('/locked')
       }
       // If not blocked and on locked page, redirect to home
-      else if (!blocked && pathname === '/locked') {
+      else if (!blocked && isOnLockedPage) {
         router.replace('/')
       }
     }
@@ -55,10 +60,19 @@ export function TimeBasedAccessControl() {
 
   // Render blocking overlay if blocked and not on locked page
   // This prevents any interaction while redirect is happening
-  if (isBlocked && pathname !== '/locked') {
+  // Normalize pathname for comparison (remove trailing slash)
+  const normalizedPath = pathname.replace(/\/$/, '')
+  const isOnLockedPage = normalizedPath === '/locked'
+  
+  if (isBlocked && !isOnLockedPage) {
     return (
-      <div className="fixed inset-0 z-[99999] bg-black flex items-center justify-center">
-        <div className="text-white text-xl">Redirecting to locked page...</div>
+      <div className="fixed inset-0 z-[99999] bg-black flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="text-white text-lg md:text-xl mb-4">Redirecting to locked page...</div>
+          <div className="flex justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          </div>
+        </div>
       </div>
     )
   }
