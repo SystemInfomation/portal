@@ -33,7 +33,7 @@ export function WelcomeNotification() {
     }
 
     function fallbackIpGeolocation() {
-      fetch("https://ipinfo.io/json?token=demo")
+      fetch("https://ipinfo.io/json?token=11303f799ef689")
         .then((res) => res.json())
         .then((data) => {
           if (data.loc) {
