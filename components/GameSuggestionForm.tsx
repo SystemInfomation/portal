@@ -58,28 +58,29 @@ export function GameSuggestionForm() {
 
   // Check for cooldown on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
-      if (lastSubmission) {
-        const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
+    // Ensure we're in a browser environment
+    if (typeof window === 'undefined') return
+    
+    const lastSubmission = localStorage.getItem('forsyth-form-last-submit')
+    if (lastSubmission) {
+      const timeSinceSubmit = Date.now() - parseInt(lastSubmission)
+      
+      if (timeSinceSubmit < FORM_COOLDOWN_MS) {
+        const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
+        setCooldownRemaining(remaining)
         
-        if (timeSinceSubmit < FORM_COOLDOWN_MS) {
-          const remaining = Math.ceil((FORM_COOLDOWN_MS - timeSinceSubmit) / 1000)
-          setCooldownRemaining(remaining)
-          
-          // Start countdown
-          const interval = setInterval(() => {
-            const newRemaining = Math.ceil((FORM_COOLDOWN_MS - (Date.now() - parseInt(lastSubmission))) / 1000)
-            if (newRemaining <= 0) {
-              setCooldownRemaining(0)
-              clearInterval(interval)
-            } else {
-              setCooldownRemaining(newRemaining)
-            }
-          }, 1000)
-          
-          return () => clearInterval(interval)
-        }
+        // Start countdown
+        const interval = setInterval(() => {
+          const newRemaining = Math.ceil((FORM_COOLDOWN_MS - (Date.now() - parseInt(lastSubmission))) / 1000)
+          if (newRemaining <= 0) {
+            setCooldownRemaining(0)
+            clearInterval(interval)
+          } else {
+            setCooldownRemaining(newRemaining)
+          }
+        }, 1000)
+        
+        return () => clearInterval(interval)
       }
     }
   }, [])
