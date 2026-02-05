@@ -1,13 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Clock, Lock, Unlock } from 'lucide-react'
+import { Clock, Lock, Unlock, Settings } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { motion } from 'framer-motion'
 
 /**
  * Locked page - Displayed when website is accessed outside school hours
  * 
- * Automatically redirects back to home when school hours resume
+ * During locked hours, users can access the Settings page to configure preferences.
+ * Automatically redirects back to home when school hours resume.
  */
 export default function LockedPage() {
   const router = useRouter()
@@ -138,6 +141,29 @@ export default function LockedPage() {
             </p>
           </div>
         </div>
+
+        {/* Settings Access Button */}
+        <Link href="/settings">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+            className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-5 backdrop-blur-xl shadow-2xl hover:border-cyan-400/50 transition-all cursor-pointer group"
+          >
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="bg-cyan-500/20 p-2 sm:p-3 rounded-lg group-hover:bg-cyan-500/30 transition-colors">
+                <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-white text-sm sm:text-base">Access Settings</p>
+                <p className="text-xs sm:text-sm text-white/60">Configure portal preferences during locked hours</p>
+              </div>
+              <div className="text-cyan-400 group-hover:translate-x-1 transition-transform">
+                →
+              </div>
+            </div>
+          </motion.div>
+        </Link>
 
         {/* Footer */}
         <div className="text-center space-y-1 px-1">

@@ -9,12 +9,15 @@ import { useRouter, usePathname } from 'next/navigation'
  * Allowed hours: 6 AM - 5 PM Eastern Time
  * Blocked hours: 5 PM - 6 AM Eastern Time
  * 
+ * During after-school hours (blocked hours), only the /settings page is accessible.
+ * All other pages redirect to /locked.
+ * 
  * Can be disabled via localStorage setting: 'forsyth-time-restriction-enabled'
  * 
  * Multiple layers of protection:
  * - Immediate redirect on mount
  * - Continuous checking every second
- * - Blocks all navigation attempts
+ * - Blocks all navigation attempts (except /settings during blocked hours)
  * - Covers entire page to prevent interaction
  */
 export function TimeBasedAccessControl() {
@@ -57,11 +60,15 @@ export function TimeBasedAccessControl() {
       // Normalize pathname for comparison (remove trailing slash)
       const normalizedPath = pathname.replace(/\/$/, '')
       const isOnLockedPage = normalizedPath === '/locked'
+      const isOnSettingsPage = normalizedPath === '/settings'
 
-      // If blocked and not already on locked page, redirect immediately
-      if (blocked && !isOnLockedPage) {
-        // Use replace to prevent browser back button from accessing blocked pages
-        router.replace('/locked')
+      // During after-school hours, allow access to settings page only
+      if (blocked) {
+        // If not on locked page or settings page, redirect to locked page
+        if (!isOnLockedPage && !isOnSettingsPage) {
+          // Use replace to prevent browser back button from accessing blocked pages
+          router.replace('/locked')
+        }
       }
       // If not blocked and on locked page, redirect to home
       else if (!blocked && isOnLockedPage) {
@@ -78,13 +85,14 @@ export function TimeBasedAccessControl() {
     return () => clearInterval(interval)
   }, [router, pathname])
 
-  // Render blocking overlay if blocked and not on locked page
+  // Render blocking overlay if blocked and not on locked page or settings page
   // This prevents any interaction while redirect is happening
   // Normalize pathname for comparison (remove trailing slash)
   const normalizedPath = pathname.replace(/\/$/, '')
   const isOnLockedPage = normalizedPath === '/locked'
+  const isOnSettingsPage = normalizedPath === '/settings'
   
-  if (isBlocked && !isOnLockedPage) {
+  if (isBlocked && !isOnLockedPage && !isOnSettingsPage) {
     return (
       <div className="fixed inset-0 z-[99999] bg-black flex items-center justify-center p-4">
         <div className="text-center">
