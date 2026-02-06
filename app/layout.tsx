@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import { Navigation } from '@/components/Navigation'
 import { TabCloakLoader } from '@/components/TabCloakLoader'
@@ -50,23 +51,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <head>
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-FGXXN9EK0N"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-
-              gtag('config', 'G-FGXXN9EK0N');
-            `,
-          }}
-        />
-
-      </head>
+      <head></head>
       <body className={`${inter.className} min-h-screen`}>
+        <Script 
+          src="https://www.googletagmanager.com/gtag/js?id=G-FGXXN9EK0N" 
+          strategy="afterInteractive"
+        />
+        <Script id="analytics-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-FGXXN9EK0N');
+          `}
+        </Script>
         <div className="fixed inset-0 bg-gradient-cosmic -z-10" />
         <GeoLock />
         <TimeBasedAccessControl />

@@ -100,7 +100,7 @@ export class SecurityUtils {
   }
 
   // Log security events
-  static logSecurityEvent(event: string, details: Record<string, any>) {
+  static logSecurityEvent(event: string, details: Record<string, unknown>) {
     const securityLog = {
       timestamp: new Date().toISOString(),
       event,

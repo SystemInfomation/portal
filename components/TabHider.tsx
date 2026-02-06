@@ -47,8 +47,9 @@ export function TabHider() {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('blur', handleBlur)
       window.removeEventListener('focus', handleFocus)
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+      const currentTimeout = timeoutRef.current
+      if (currentTimeout) {
+        clearTimeout(currentTimeout)
       }
     }
   }, [isGamePage])

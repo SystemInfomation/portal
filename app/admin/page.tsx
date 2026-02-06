@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, Copy, Download, Eye, Users, Activity, TrendingUp, RefreshCw, Globe, School, BarChart3 } from 'lucide-react'
+import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, Copy, Download, Users, School, BarChart3 } from 'lucide-react'
 import { withBasePath } from '@/lib/utils'
 
 const ADMIN_PASSCODE = '1140' // Admin passcode

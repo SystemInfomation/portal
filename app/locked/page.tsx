@@ -23,7 +23,6 @@ export default function LockedPage() {
       const now = new Date()
       const easternTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
       const hours = easternTime.getHours()
-      const minutes = easternTime.getMinutes()
       
       // Update current time display
       setCurrentTime(easternTime.toLocaleTimeString('en-US', {

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Settings as SettingsIcon, Shield, Lightbulb } from 'lucide-react'
+import { Settings as SettingsIcon, Shield } from 'lucide-react'
 import { TabCloak } from '@/components/TabCloak'
 import { GameSuggestionForm } from '@/components/GameSuggestionForm'
 import { TimeRestrictionToggle } from '@/components/TimeRestrictionToggle'

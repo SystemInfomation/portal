@@ -140,7 +140,7 @@ export function GameSuggestionForm() {
           {/* Game Suggestion Input */}
           <div className="space-y-3">
             <label htmlFor="message" className="block text-sm font-semibold text-slate-900 dark:text-white">
-              Tell us about the game you'd like to see
+              Tell us about the game you&apos;d like to see
             </label>
             <div className="relative">
               <textarea

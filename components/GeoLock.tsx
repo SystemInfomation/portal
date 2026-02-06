@@ -1,8 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
-
 /**
  * GeoLock Component - Restricts access to users from Georgia, United States only
  * 
@@ -13,23 +10,6 @@ import { useRouter, usePathname } from 'next/navigation'
  * 4. Persistent verification with 1-hour cache expiration
  * 5. No automatic background re-checking to prevent refresh loops
  */
-
-interface GeoLocation {
-  country?: string
-  region?: string
-  state?: string
-  city?: string
-  lat?: number
-  lon?: number
-  timezone?: string
-  isVPN?: boolean
-  isProxy?: boolean
-}
-
-const ALLOWED_STATE = 'Georgia'
-const ALLOWED_COUNTRY = 'United States'
-const ALLOWED_COUNTRY_CODE = 'US'
-const VERIFICATION_EXPIRY = 3600000 // 1 hour in milliseconds
 
 export function GeoLock() {
   // No restrictions: anyone can enter the website
