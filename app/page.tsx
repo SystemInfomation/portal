@@ -7,6 +7,7 @@ import { games } from '@/data/games'
 import { GameCard } from '@/components/GameCard'
 import { Footer } from '@/components/Footer'
 import { BookmarkNotification } from '@/components/BookmarkNotification'
+import { RatingPopup } from '@/components/RatingPopup'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { GridBackground } from '@/components/ui/grid-background-demo'
@@ -29,6 +30,7 @@ export default function Home() {
     <div className="max-w-7xl mx-auto space-y-16">
       <GridBackground />
       <BookmarkNotification />
+      <RatingPopup />
       
       {/* Hero Section */}
       <motion.section
