@@ -51,7 +51,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <head></head>
       <body className={`${inter.className} min-h-screen`}>
         <Script 
           src="https://www.googletagmanager.com/gtag/js?id=G-FGXXN9EK0N" 

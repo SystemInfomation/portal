@@ -37,7 +37,9 @@ export function ScreenPrivacyGuard() {
           
           // Send alert to monitoring system
           if (typeof window !== 'undefined' && 'gtag' in window) {
-            (window as { gtag: (event: string, action: string, params: Record<string, string>) => void }).gtag('event', 'screen_capture_blocked', {
+            // Use type assertion for gtag - matches Google Analytics interface
+            type GtagFunction = (...args: unknown[]) => void;
+            (window.gtag as GtagFunction)('event', 'screen_capture_blocked', {
               event_category: 'security',
               event_label: 'screen_capture_attempt'
             })
