@@ -9,8 +9,8 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   
-  // Enable static export for GitHub Pages
-  output: 'export',
+  // Enable static export for GitHub Pages (disabled for real-time features)
+  // output: 'export',
   
   // GitHub Pages serves from /<repo-name>/ path
   // Set to empty string if using custom domain or root deployment

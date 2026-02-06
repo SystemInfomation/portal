@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, Copy, Download, School, BarChart3, Users } from 'lucide-react'
+import { Shield, Lock, Send, Bell, CheckCircle, AlertTriangle, School, BarChart3, Users, Wifi } from 'lucide-react'
 import { withBasePath } from '@/lib/utils'
 import { SecurityUtils } from '@/lib/security'
+import { sendAnnouncement } from '@/app/actions'
 
 // SHA-256 hash of '1140'
 const ADMIN_PASSCODE_HASH = 'bc10b57514d76124b4120a34db2224067fed660b09408ade0b14b582946ff2fc'
@@ -70,12 +71,12 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [passcode, setPasscode] = useState('')
   const [passcodeError, setPasscodeError] = useState('')
-  const [announcement, setAnnouncement] = useState('')
-  const [announcementType, setAnnouncementType] = useState<'info' | 'warning' | 'success'>('info')
-  const [currentAnnouncement, setCurrentAnnouncement] = useState<{message: string, type: string, enabled: boolean} | null>(null)
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [generatedJSON, setGeneratedJSON] = useState('')
-  const [copySuccess, setCopySuccess] = useState(false)
+  
+  // Real-time announcement states
+  const [realtimeMessage, setRealtimeMessage] = useState('')
+  const [isSendingRealtime, setIsSendingRealtime] = useState(false)
+  const [realtimeStatus, setRealtimeStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [realtimeError, setRealtimeError] = useState('')
 
   const [sessionStartTime] = useState(Date.now())
   
@@ -171,19 +172,7 @@ export default function AdminPage() {
 
     // Load current announcement from public JSON
     const loadCurrentAnnouncement = async () => {
-      try {
-        const response = await fetch(withBasePath('/announcement.json'), {
-          cache: 'no-store'
-        })
-        if (response.ok) {
-          const data = await response.json()
-          if (data.enabled && data.message) {
-            setCurrentAnnouncement(data)
-          }
-        }
-      } catch {
-        // Ignore
-      }
+      // Removed - using only real-time announcements now
     }
     loadCurrentAnnouncement()
 
@@ -257,41 +246,42 @@ export default function AdminPage() {
 
   const handleAnnouncementSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!announcement.trim()) return
-
-    const announcementData = {
-      message: announcement.trim(),
-      type: announcementType,
-      timestamp: Date.now(),
-      id: Math.random().toString(36).substring(7) + Date.now().toString(36),
-      enabled: true
-    }
-
-    const jsonContent = JSON.stringify(announcementData, null, 2)
-    setGeneratedJSON(jsonContent)
-    setSubmitStatus('success')
+    // Removed - using only real-time announcements now
   }
 
   const handleCopyJSON = async () => {
-    try {
-      await navigator.clipboard.writeText(generatedJSON)
-      setCopySuccess(true)
-      setTimeout(() => setCopySuccess(false), 2000)
-    } catch {
-      // Ignore
-    }
+    // Removed - using only real-time announcements now
   }
 
   const handleDownloadJSON = () => {
-    const blob = new Blob([generatedJSON], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'announcement.json'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    // Removed - using only real-time announcements now
+  }
+
+  const handleRealtimeAnnouncement = async () => {
+    if (!realtimeMessage.trim()) return
+
+    setIsSendingRealtime(true)
+    setRealtimeStatus('idle')
+    setRealtimeError('')
+
+    try {
+      const result = await sendAnnouncement(realtimeMessage.trim())
+      
+      if (result.success) {
+        setRealtimeStatus('success')
+        setRealtimeMessage('')
+        // Clear success message after 3 seconds
+        setTimeout(() => setRealtimeStatus('idle'), 3000)
+      } else {
+        setRealtimeStatus('error')
+        setRealtimeError(result.error || 'Failed to send announcement')
+      }
+    } catch (error) {
+      setRealtimeStatus('error')
+      setRealtimeError('Network error occurred')
+    } finally {
+      setIsSendingRealtime(false)
+    }
   }
 
 
@@ -299,17 +289,7 @@ export default function AdminPage() {
 
 
   const clearAnnouncement = () => {
-    const emptyAnnouncement = {
-      message: '',
-      type: 'info',
-      timestamp: 0,
-      id: '',
-      enabled: false
-    }
-    const jsonContent = JSON.stringify(emptyAnnouncement, null, 2)
-    setGeneratedJSON(jsonContent)
-    setCurrentAnnouncement(null)
-    setSubmitStatus('idle')
+    // Removed - using only real-time announcements now
   }
 
   // Passcode screen
@@ -516,188 +496,105 @@ export default function AdminPage() {
         </p>
       </motion.section>
 
-      {/* Current Announcement */}
+      {/* Real-time Announcement */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+        transition={{ delay: 0.25 }}
         className="glass rounded-2xl border border-border p-6 space-y-4"
       >
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Bell className="w-5 h-5 text-primary" />
-            Current Active Announcement
+            <Wifi className="w-5 h-5 text-green-500" />
+            Real-time Broadcast
           </h2>
-          {currentAnnouncement && (
-            <button
-              onClick={clearAnnouncement}
-              className="px-3 py-1.5 text-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Trash2 className="w-4 h-4" />
-              Disable
-            </button>
-          )}
+          <div className="flex items-center gap-2 text-xs text-green-400">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+            <span>Live Broadcasting</span>
+          </div>
         </div>
 
-        {currentAnnouncement ? (
-          <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
-            <p className="text-foreground">{currentAnnouncement.message}</p>
-            <p className="text-xs text-muted-foreground mt-2">Type: {currentAnnouncement.type}</p>
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-sm italic">No active announcement</p>
-        )}
-      </motion.section>
+        <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+          <p className="text-sm text-green-400 mb-2">
+            <strong>⚡ Instant Delivery:</strong> Send announcements that appear immediately for all active users without requiring a deployment.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            <strong>💰 Completely FREE:</strong> Uses Server-Sent Events (SSE) - no third-party costs!
+          </p>
+        </div>
 
-      {/* Create Announcement */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="glass rounded-2xl border border-border p-6 space-y-4"
-      >
-        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <Send className="w-5 h-5 text-primary" />
-          Create Announcement
-        </h2>
-
-        <form onSubmit={handleAnnouncementSubmit} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); handleRealtimeAnnouncement(); }} className="space-y-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-foreground">
-              Announcement Type
-            </label>
-            <div className="flex gap-2">
-              {(['info', 'warning', 'success'] as const).map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setAnnouncementType(type)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    announcementType === type
-                      ? type === 'info'
-                        ? 'bg-blue-500/20 border-2 border-blue-500 text-blue-400'
-                        : type === 'warning'
-                        ? 'bg-yellow-500/20 border-2 border-yellow-500 text-yellow-400'
-                        : 'bg-green-500/20 border-2 border-green-500 text-green-400'
-                      : 'bg-background/50 border-2 border-border text-muted-foreground hover:border-primary/50'
-                  }`}
-                >
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-foreground">
-              Message
+              Real-time Message
             </label>
             <textarea
-              value={announcement}
-              onChange={(e) => setAnnouncement(e.target.value)}
-              placeholder="Enter your announcement message..."
-              rows={4}
-              className="w-full px-4 py-3 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder-muted-foreground resize-none"
+              value={realtimeMessage}
+              onChange={(e) => setRealtimeMessage(e.target.value)}
+              placeholder="Enter your real-time announcement message... (max 500 characters)"
+              rows={3}
+              maxLength={500}
+              className="w-full px-4 py-3 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/50 text-foreground placeholder-muted-foreground resize-none"
             />
+            <div className="text-xs text-muted-foreground text-right">
+              {realtimeMessage.length}/500 characters
+            </div>
           </div>
 
           <button
             type="submit"
-            disabled={!announcement.trim()}
-            className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            disabled={!realtimeMessage.trim() || isSendingRealtime}
+            className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            <Send className="w-4 h-4" />
-            Broadcast Announcement
+            {isSendingRealtime ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Broadcasting...
+              </>
+            ) : (
+              <>
+                <Wifi className="w-4 h-4" />
+                Broadcast Real-time Announcement
+              </>
+            )}
           </button>
 
           <AnimatePresence>
-            {submitStatus === 'success' && (
+            {realtimeStatus === 'success' && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="space-y-4"
+                className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-center"
               >
-                <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-center">
-                  JSON generated successfully! Copy or download the content below.
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="block text-sm font-medium text-foreground">
-                      Generated JSON (Copy this to /public/announcement.json)
-                    </label>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={handleCopyJSON}
-                        className="px-3 py-1.5 text-sm bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        {copySuccess ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                        {copySuccess ? 'Copied!' : 'Copy'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleDownloadJSON}
-                        className="px-3 py-1.5 text-sm bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        <Download className="w-4 h-4" />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                  <pre className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground text-sm overflow-x-auto">
-                    {generatedJSON}
-                  </pre>
-                  <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm">
-                    <p className="font-semibold mb-1">📝 Instructions:</p>
-                    <ol className="list-decimal list-inside space-y-1 text-xs">
-                      <li>Copy the JSON content above</li>
-                      <li>Update /public/announcement.json with this content</li>
-                      <li>Commit and push to the repository</li>
-                      <li>The announcement will appear for all users after deployment</li>
-                    </ol>
-                  </div>
-                </div>
+                <CheckCircle className="w-5 h-5 inline mr-2" />
+                Real-time announcement sent successfully! Users will see it within 10 seconds.
+              </motion.div>
+            )}
+            {realtimeStatus === 'error' && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-center"
+              >
+                <AlertTriangle className="w-5 h-5 inline mr-2" />
+                {realtimeError || 'Failed to send real-time announcement'}
               </motion.div>
             )}
           </AnimatePresence>
         </form>
-      </motion.section>
 
-      {/* Preview */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="glass rounded-2xl border border-border p-6 space-y-4"
-      >
-        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 text-primary" />
-          Preview
-        </h2>
-        <p className="text-muted-foreground text-sm">
-          This is how the announcement will appear to users:
-        </p>
-
-        {announcement.trim() && (
-          <div className={`p-4 rounded-xl border flex items-start gap-3 ${
-            announcementType === 'info'
-              ? 'bg-blue-500/10 border-blue-500/30'
-              : announcementType === 'warning'
-              ? 'bg-yellow-500/10 border-yellow-500/30'
-              : 'bg-green-500/10 border-green-500/30'
-          }`}>
-            <Bell className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
-              announcementType === 'info'
-                ? 'text-blue-400'
-                : announcementType === 'warning'
-                ? 'text-yellow-400'
-                : 'text-green-400'
-            }`} />
-            <p className="text-foreground text-sm">{announcement}</p>
-          </div>
-        )}
+        <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm">
+          <p className="font-semibold mb-1">📡 How it works:</p>
+          <ul className="list-disc list-inside space-y-1 text-xs">
+            <li>Message broadcasts instantly via Server-Sent Events (SSE)</li>
+            <li>Users see the announcement after a 2-second delay</li>
+            <li>Announcement displays for 15 seconds then auto-dismisses</li>
+            <li>Users who join after the broadcast won't see it</li>
+            <li><strong>100% FREE - no third-party services needed!</strong></li>
+          </ul>
+        </div>
       </motion.section>
     </div>
   )
