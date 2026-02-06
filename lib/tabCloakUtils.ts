@@ -36,7 +36,7 @@ export const CLOAK_OPTIONS: CloakOption[] = [
   },
   {
     id: 'classlink',
-    name: 'Classlink',
+    name: 'ClassLink',
     title: 'ClassLink LaunchPad',
     bgColor: '#000a14', // dark blue background
     cssClass: 'cloak-classlink'
