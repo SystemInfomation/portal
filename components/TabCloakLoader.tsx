@@ -2,52 +2,7 @@
 
 import { useEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
-
-const CLOAK_OPTIONS = [
-  {
-    id: 'google-drive',
-    title: 'My Drive - Google Drive',
-    bgColor: '#000000', // black background
-    cssClass: 'cloak-google-drive'
-  },
-  {
-    id: 'canvas',
-    title: 'Dashboard',
-    bgColor: '#1a0000', // dark red background
-    cssClass: 'cloak-canvas'
-  },
-  {
-    id: 'classlink',
-    title: 'ClassLink LaunchPad',
-    bgColor: '#000a14', // dark blue background
-    cssClass: 'cloak-classlink'
-  },
-  {
-    id: 'linewize',
-    title: 'Linewize',
-    bgColor: '#000a14', // dark blue background
-    cssClass: 'cloak-linewize'
-  },
-  {
-    id: 'infinite-campus',
-    title: 'Campus Portal',
-    bgColor: '#001a00', // dark green background
-    cssClass: 'cloak-infinite-campus'
-  }
-]
-
-// Utility function to create a solid color favicon as a data URL
-const createSolidColorFavicon = (color: string): string => {
-  const canvas = document.createElement('canvas')
-  canvas.width = 32
-  canvas.height = 32
-  const ctx = canvas.getContext('2d')
-  if (ctx) {
-    ctx.fillStyle = color
-    ctx.fillRect(0, 0, 32, 32)
-  }
-  return canvas.toDataURL('image/png')
-}
+import { createSolidColorFavicon, CLOAK_OPTIONS } from '@/lib/tabCloakUtils'
 
 // Helper to remove all cloak classes from body
 const removeCloakClasses = () => {

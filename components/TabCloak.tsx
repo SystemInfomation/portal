@@ -3,68 +3,9 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Globe } from 'lucide-react'
+import { createSolidColorFavicon, CLOAK_OPTIONS } from '@/lib/tabCloakUtils'
 
-const DEFAULT_FAVICON = 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png'
 const CLOAK_COOLDOWN_MS = 3000 // 3 seconds
-
-interface CloakOption {
-  id: string
-  name: string
-  title: string
-  bgColor: string
-  cssClass: string
-}
-
-// Utility function to create a solid color favicon as a data URL
-const createSolidColorFavicon = (color: string): string => {
-  const canvas = document.createElement('canvas')
-  canvas.width = 32
-  canvas.height = 32
-  const ctx = canvas.getContext('2d')
-  if (ctx) {
-    ctx.fillStyle = color
-    ctx.fillRect(0, 0, 32, 32)
-  }
-  return canvas.toDataURL('image/png')
-}
-
-const CLOAK_OPTIONS: CloakOption[] = [
-  {
-    id: 'google-drive',
-    name: 'Google Drive',
-    title: 'My Drive - Google Drive',
-    bgColor: '#000000', // black background
-    cssClass: 'cloak-google-drive'
-  },
-  {
-    id: 'canvas',
-    name: 'Canvas',
-    title: 'Dashboard',
-    bgColor: '#1a0000', // dark red background
-    cssClass: 'cloak-canvas'
-  },
-  {
-    id: 'classlink',
-    name: 'Classlink',
-    title: 'ClassLink LaunchPad',
-    bgColor: '#000a14', // dark blue background
-    cssClass: 'cloak-classlink'
-  },
-  {
-    id: 'linewize',
-    name: 'Linewize',
-    title: 'Linewize',
-    bgColor: '#000a14', // dark blue background
-    cssClass: 'cloak-linewize'
-  },
-  {
-    id: 'infinite-campus',
-    name: 'Infinite Campus',
-    title: 'Campus Portal',
-    bgColor: '#001a00', // dark green background
-    cssClass: 'cloak-infinite-campus'
-  }
-]
 
 // Helper to remove all cloak classes from body
 const removeCloakClasses = () => {
@@ -121,7 +62,7 @@ export function TabCloak() {
       document.title = 'Forsyth Games Portal'
       const favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement
       if (favicon) {
-        favicon.href = DEFAULT_FAVICON
+        favicon.href = 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png'
       }
       // Remove all cloak CSS classes
       removeCloakClasses()
