@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const revalidate = 0;
 
 // Simple in-memory storage (resets on server restart)
 let currentAnnouncement: { message: string; timestamp: number } | null = null
