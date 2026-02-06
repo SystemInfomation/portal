@@ -159,7 +159,7 @@ export function TabCloak() {
 
         {/* Description */}
         <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-          Change your browser tab title and icon to blend in. Select a preset below to instantly apply the disguise:
+          Personalize your experience:
         </p>
 
         {/* Cooldown Message */}
