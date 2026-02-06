@@ -53,7 +53,7 @@ export function TabHider() {
     return (
       <div className="fixed inset-0 bg-black z-[9999] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <h1 className="text-white text-2xl font-bold">Classroom Tools</h1>
+          <h1 className="text-white text-2xl font-bold">Classroom System Blocker</h1>
           <p className="text-gray-400">Click to return to content</p>
         </div>
       </div>
