@@ -7,14 +7,18 @@ import Script from 'next/script'
 
 export function RatingPopup() {
   const [isVisible, setIsVisible] = useState(false)
-  const [isDismissed, setIsDismissed] = useState(false)
 
   useEffect(() => {
     // Check if user has already dismissed the rating popup
+    // Only access localStorage in browser environment
+    if (typeof window === 'undefined') return
+    
     const hasDismissedRating = localStorage.getItem('forsyth-rating-dismissed')
     
     if (!hasDismissedRating) {
       // Show popup after 1 minute (60000 milliseconds)
+      // Note: Timer resets if user navigates away and returns - this ensures
+      // users have stayed continuously for 1 minute
       const timer = setTimeout(() => {
         setIsVisible(true)
       }, 60000)
@@ -25,8 +29,9 @@ export function RatingPopup() {
 
   const handleDismiss = () => {
     setIsVisible(false)
-    setIsDismissed(true)
-    localStorage.setItem('forsyth-rating-dismissed', 'true')
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('forsyth-rating-dismissed', 'true')
+    }
   }
 
   return (
@@ -37,7 +42,7 @@ export function RatingPopup() {
       />
       
       <AnimatePresence>
-        {isVisible && !isDismissed && (
+        {isVisible && (
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
