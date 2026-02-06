@@ -152,8 +152,8 @@ export function TabCloak() {
             <Globe className="w-6 h-6 text-blue-400" />
           </div>
           <div>
-            <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">Tab Cloaking</h2>
-            <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Disguise your tab with educational presets</p>
+            <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">Change Theme</h2>
+            <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Customize your tab with educational preset colors</p>
           </div>
         </div>
 
