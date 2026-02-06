@@ -25,17 +25,16 @@ export function BookmarkNotification() {
   const handleBookmark = () => {
     // Try to use the browser's bookmark functionality
     if (typeof window !== 'undefined') {
-      // @ts-expect-error - Firefox specific API
+      // Check for Firefox sidebar API
+      // @ts-expect-error - Firefox specific API not in standard types
       if (window.sidebar && window.sidebar.addPanel) {
-        // @ts-expect-error - Firefox specific API
+        // @ts-expect-error - Firefox specific API not in standard types
         window.sidebar.addPanel('Forsyth Games', window.location.href, '')
-        // @ts-expect-error - IE specific API
       } else if (window.external && ('AddFavorite' in window.external)) {
-        // @ts-expect-error - IE specific API
+        // Use type assertion for IE specific API
         (window.external as { AddFavorite: (url: string, title: string) => void }).AddFavorite(window.location.href, 'Forsyth Games')
-        // @ts-expect-error - Opera specific API
-      } else if (window.opera && window.print) {
-        // Opera
+      } else if ('opera' in window) {
+        // Opera browser fallback - just update title
         document.title = 'Forsyth Games'
         return true
       } else {

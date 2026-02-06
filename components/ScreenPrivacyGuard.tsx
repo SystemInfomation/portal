@@ -150,9 +150,14 @@ export function ScreenPrivacyGuard() {
         
         // Copy static methods and prototype
         CustomMediaRecorder.prototype = OriginalMediaRecorder.prototype
-        ;(CustomMediaRecorder as typeof MediaRecorder & { isTypeSupported: typeof MediaRecorder.isTypeSupported }).isTypeSupported = OriginalMediaRecorder.isTypeSupported
+        Object.defineProperty(CustomMediaRecorder, 'isTypeSupported', {
+          value: OriginalMediaRecorder.isTypeSupported,
+          writable: false,
+          enumerable: true,
+          configurable: true
+        })
         
-        window.MediaRecorder = CustomMediaRecorder as typeof MediaRecorder
+        window.MediaRecorder = CustomMediaRecorder as unknown as typeof MediaRecorder
       }
 
       // ========================================
@@ -214,10 +219,8 @@ export function ScreenPrivacyGuard() {
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // User switched tabs or minimized window - don't immediately black screen
-        setIsTabActive(false)
         // Only black screen if we detect actual capture attempts
       } else {
-        setIsTabActive(true)
         setIsBlackScreen(false)
       }
     }
