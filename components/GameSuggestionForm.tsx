@@ -93,6 +93,11 @@ export function GameSuggestionForm() {
         localStorage.setItem('forsyth-form-last-submit', Date.now().toString())
         setCooldownRemaining(60)
         
+        // Redirect to custom success page after successful submission
+        setTimeout(() => {
+          window.location.href = '/settings?success=true'
+        }, 2000)
+        
         // Start countdown
         const interval = setInterval(() => {
           setCooldownRemaining(prev => {

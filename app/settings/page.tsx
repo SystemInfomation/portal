@@ -4,12 +4,15 @@ import { motion } from 'framer-motion'
 import { Settings as SettingsIcon, Shield } from 'lucide-react'
 import { TabCloak } from '@/components/TabCloak'
 import { GameSuggestionForm } from '@/components/GameSuggestionForm'
+import { FormSuccessNotification } from '@/components/FormSuccessNotification'
 import { TimeRestrictionToggle } from '@/components/TimeRestrictionToggle'
 import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
   return (
     <div className="relative min-h-screen w-full bg-white dark:bg-black">
+      <FormSuccessNotification />
+      
       {/* Dot Background Pattern */}
       <div
         className={cn(
