@@ -17,8 +17,8 @@ export const utilities: Utility[] = [
   },
   {
     id: 'calculator',
-    name: 'Scientific Calculator',
-    description: 'Advanced calculator with scientific functions and history',
+    name: 'TI-84 Calculator',
+    description: 'Professional graphing calculator emulator with advanced functions',
     iconUrl: '/utilities/calculator/favicon.png',
     iframeSrc: '/utilities/calculator/'
   },
