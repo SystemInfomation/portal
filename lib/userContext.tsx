@@ -40,24 +40,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
       if (name && name.trim()) {
         const trimmedName = name.trim()
         
-        // Check for profanity
+        // Check for profanity using the bad-words filter
         if (filter.isProfane(trimmedName)) {
           setError('Please enter a name without inappropriate language.')
-          return false
-        }
-        
-        // Additional validation for common inappropriate patterns
-        const inappropriatePatterns = [
-          /\b(admin|root|god|moderator|owner)\b/i,
-          /\b(fuck|shit|bitch|ass|damn|hell|crap|piss)\b/i,
-          /\b(dick|pussy|cock|cunt|whore|slut)\b/i,
-          /\b(kill|die|death|murder|suicide)\b/i,
-          /\b(hate|racist|nazi|terrorist)\b/i,
-          /\b(drug|cocaine|heroin|meth|weed)\b/i,
-        ]
-        
-        if (inappropriatePatterns.some(pattern => pattern.test(trimmedName))) {
-          setError('Please enter an appropriate name.')
           return false
         }
         

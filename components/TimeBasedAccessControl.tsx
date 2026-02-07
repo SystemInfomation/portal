@@ -6,18 +6,22 @@ import { useRouter, usePathname } from 'next/navigation'
 /**
  * TimeBasedAccessControl - Enforces time-based access control client-side
  * 
- * Allowed hours: 6 AM - 5 PM Eastern Time
- * Blocked hours: 5 PM - 6 AM Eastern Time
+ * Allowed hours (weekdays): 6 AM - 5 PM Eastern Time
+ * Blocked hours (weekdays): 5 PM - 6 AM Eastern Time
+ * Weekend access: Unrestricted (Saturday & Sunday)
  * 
- * During after-school hours (blocked hours), only the /settings page is accessible.
+ * During after-school hours on weekdays (blocked hours), only the /settings page is accessible.
  * All other pages redirect to /locked.
+ * 
+ * On weekends, users can access all content without time restrictions.
  * 
  * Can be disabled via localStorage setting: 'forsyth-time-restriction-enabled'
  * 
  * Multiple layers of protection:
  * - Immediate redirect on mount
  * - Continuous checking every second
- * - Blocks all navigation attempts (except /settings during blocked hours)
+ * - Weekend detection for unrestricted access
+ * - Blocks all navigation attempts (except /settings during blocked hours on weekdays)
  * - Covers entire page to prevent interaction
  */
 export function TimeBasedAccessControl() {
@@ -48,9 +52,26 @@ export function TimeBasedAccessControl() {
       // Get current time in Eastern timezone
       const now = new Date()
       const easternTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }))
+      const dayOfWeek = easternTime.getDay() // 0 = Sunday, 6 = Saturday
       const hours = easternTime.getHours()
       
-      // Block if outside 6 AM - 5 PM (Eastern Time)
+      // Check if it's weekend (Saturday = 6, Sunday = 0)
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+      
+      // On weekends, allow unrestricted access
+      if (isWeekend) {
+        setIsBlocked(false)
+        
+        // If on locked page during weekend, redirect home
+        const normalizedPath = pathname.replace(/\/$/, '')
+        const isOnLockedPage = normalizedPath === '/locked'
+        if (isOnLockedPage) {
+          router.replace('/')
+        }
+        return
+      }
+      
+      // On weekdays, block if outside 6 AM - 5 PM (Eastern Time)
       // Allowed: 6:00 AM (6) to 4:59 PM (16:59)
       // Blocked: 5:00 PM (17) to 5:59 AM (5:59)
       const blocked = hours < 6 || hours >= 17
@@ -62,7 +83,7 @@ export function TimeBasedAccessControl() {
       const isOnLockedPage = normalizedPath === '/locked'
       const isOnSettingsPage = normalizedPath === '/settings'
 
-      // During after-school hours, allow access to settings page only
+      // During after-school hours on weekdays, allow access to settings page only
       if (blocked) {
         // If not on locked page or settings page, redirect to locked page
         if (!isOnLockedPage && !isOnSettingsPage) {
