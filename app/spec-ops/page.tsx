@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, Copy, Download, School, BarChart3, Users } from 'lucide-react'
+import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, Copy, Download, School, BarChart3, Users, Wifi, WifiOff } from 'lucide-react'
 import { withBasePath } from '@/lib/utils'
 import { SecurityUtils } from '@/lib/security'
+import { adminAnnouncementService } from '@/lib/adminAnnouncementService'
+import type { AnnouncementData } from '@/lib/announcementService'
 
 // SHA-256 hash of '1140'
 const ADMIN_PASSCODE_HASH = 'bc10b57514d76124b4120a34db2224067fed660b09408ade0b14b582946ff2fc'
@@ -72,10 +74,11 @@ export default function AdminPage() {
   const [passcodeError, setPasscodeError] = useState('')
   const [announcement, setAnnouncement] = useState('')
   const [announcementType, setAnnouncementType] = useState<'info' | 'warning' | 'success'>('info')
-  const [currentAnnouncement, setCurrentAnnouncement] = useState<{message: string, type: string, enabled: boolean} | null>(null)
+  const [currentAnnouncement, setCurrentAnnouncement] = useState<AnnouncementData | null>(null)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [generatedJSON, setGeneratedJSON] = useState('')
-  const [copySuccess, setCopySuccess] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState('')
+  const [isBackendOnline, setIsBackendOnline] = useState<boolean | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const [sessionStartTime] = useState(Date.now())
   
@@ -169,23 +172,30 @@ export default function AdminPage() {
 
     performSecurityChecks()
 
-    // Load current announcement from public JSON
+    // Load current announcement and check backend health
     const loadCurrentAnnouncement = async () => {
       try {
-        const response = await fetch(withBasePath('/announcement.json'), {
-          cache: 'no-store'
-        })
-        if (response.ok) {
-          const data = await response.json()
-          if (data.enabled && data.message) {
-            setCurrentAnnouncement(data)
-          }
+        const [announcement, backendHealth] = await Promise.allSettled([
+          adminAnnouncementService.getCurrentAnnouncement(),
+          adminAnnouncementService.checkBackendHealth()
+        ])
+        
+        if (announcement.status === 'fulfilled') {
+          setCurrentAnnouncement(announcement.value)
+        }
+        
+        if (backendHealth.status === 'fulfilled') {
+          setIsBackendOnline(backendHealth.value)
         }
       } catch {
-        // Ignore
+        // Ignore errors for now
       }
     }
+    
     loadCurrentAnnouncement()
+    
+    // Refresh announcement status every 30 seconds
+    const refreshInterval = setInterval(loadCurrentAnnouncement, 30000)
 
     // Check for session timeout
     const checkSession = setInterval(() => {
@@ -199,7 +209,10 @@ export default function AdminPage() {
       }
     }, 60000) // Check every minute
 
-    return () => clearInterval(checkSession)
+    return () => {
+      clearInterval(checkSession)
+      clearInterval(refreshInterval)
+    }
   }, [isAuthenticated, sessionStartTime])
 
   const handlePasscodeSubmit = async (e: React.FormEvent) => {
@@ -255,61 +268,55 @@ export default function AdminPage() {
     }
   }
 
-  const handleAnnouncementSubmit = (e: React.FormEvent) => {
+  const handleAnnouncementSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!announcement.trim()) return
 
-    const announcementData = {
-      message: announcement.trim(),
-      type: announcementType,
-      timestamp: Date.now(),
-      id: Math.random().toString(36).substring(7) + Date.now().toString(36),
-      enabled: true
-    }
-
-    const jsonContent = JSON.stringify(announcementData, null, 2)
-    setGeneratedJSON(jsonContent)
-    setSubmitStatus('success')
-  }
-
-  const handleCopyJSON = async () => {
-    try {
-      await navigator.clipboard.writeText(generatedJSON)
-      setCopySuccess(true)
-      setTimeout(() => setCopySuccess(false), 2000)
-    } catch {
-      // Ignore
-    }
-  }
-
-  const handleDownloadJSON = () => {
-    const blob = new Blob([generatedJSON], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'announcement.json'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
-
-
-
-
-
-  const clearAnnouncement = () => {
-    const emptyAnnouncement = {
-      message: '',
-      type: 'info',
-      timestamp: 0,
-      id: '',
-      enabled: false
-    }
-    const jsonContent = JSON.stringify(emptyAnnouncement, null, 2)
-    setGeneratedJSON(jsonContent)
-    setCurrentAnnouncement(null)
+    setIsLoading(true)
     setSubmitStatus('idle')
+    
+    const result = await adminAnnouncementService.createAnnouncement(
+      announcement.trim(),
+      announcementType,
+      true
+    )
+    
+    if (result.success) {
+      setSubmitStatus('success')
+      setSubmitMessage('Announcement broadcasted successfully! It will appear for all users in real-time.')
+      setAnnouncement('')
+      
+      // Refresh current announcement
+      const updated = await adminAnnouncementService.getCurrentAnnouncement()
+      setCurrentAnnouncement(updated)
+    } else {
+      setSubmitStatus('error')
+      setSubmitMessage(`Failed to broadcast announcement: ${result.error}`)
+    }
+    
+    setIsLoading(false)
+  }
+
+  
+
+
+
+
+  const clearAnnouncement = async () => {
+    setIsLoading(true)
+    
+    const result = await adminAnnouncementService.disableAnnouncement()
+    
+    if (result.success) {
+      setCurrentAnnouncement(null)
+      setSubmitStatus('success')
+      setSubmitMessage('Announcement disabled successfully!')
+    } else {
+      setSubmitStatus('error')
+      setSubmitMessage(`Failed to disable announcement: ${result.error}`)
+    }
+    
+    setIsLoading(false)
   }
 
   // Passcode screen
@@ -431,7 +438,34 @@ export default function AdminPage() {
         <p className="text-muted-foreground">Manage site-wide announcements and view analytics</p>
       </motion.div>
 
-      {/* Live Analytics Section */}
+      {/* Backend Status */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="glass rounded-2xl border border-border p-6 space-y-4"
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            {isBackendOnline ? <Wifi className="w-5 h-5 text-green-400" /> : <WifiOff className="w-5 h-5 text-red-400" />}
+            Backend Status
+          </h2>
+          <div className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+            isBackendOnline 
+              ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+              : 'bg-red-500/10 text-red-400 border border-red-500/20'
+          }`}>
+            {isBackendOnline ? 'Online' : 'Offline (Using Fallback)'}
+          </div>
+        </div>
+        
+        <p className="text-sm text-muted-foreground">
+          {isBackendOnline 
+            ? 'Real-time announcements are active. Changes will appear instantly for all users.'
+            : 'Backend is offline. Using static JSON fallback. Changes require manual deployment.'
+          }
+        </p>
+      </motion.section>
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -531,10 +565,20 @@ export default function AdminPage() {
           {currentAnnouncement && (
             <button
               onClick={clearAnnouncement}
-              className="px-3 py-1.5 text-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors flex items-center gap-2"
+              disabled={isLoading}
+              className="px-3 py-1.5 text-sm bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Trash2 className="w-4 h-4" />
-              Disable
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                  Disabling...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-4 h-4" />
+                  Disable
+                </>
+              )}
             </button>
           )}
         </div>
@@ -603,62 +647,40 @@ export default function AdminPage() {
 
           <button
             type="submit"
-            disabled={!announcement.trim()}
+            disabled={!announcement.trim() || isLoading}
             className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            <Send className="w-4 h-4" />
-            Broadcast Announcement
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                Broadcasting...
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4" />
+                Broadcast Announcement
+              </>
+            )}
           </button>
 
           <AnimatePresence>
-            {submitStatus === 'success' && (
+            {submitStatus !== 'idle' && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="space-y-4"
+                className={`p-4 rounded-xl border ${
+                  submitStatus === 'success' 
+                    ? 'bg-green-500/10 border-green-500/20 text-green-400'
+                    : 'bg-red-500/10 border-red-500/20 text-red-400'
+                } text-center`}
               >
-                <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-center">
-                  JSON generated successfully! Copy or download the content below.
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="block text-sm font-medium text-foreground">
-                      Generated JSON (Copy this to /public/announcement.json)
-                    </label>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={handleCopyJSON}
-                        className="px-3 py-1.5 text-sm bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        {copySuccess ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                        {copySuccess ? 'Copied!' : 'Copy'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleDownloadJSON}
-                        className="px-3 py-1.5 text-sm bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        <Download className="w-4 h-4" />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                  <pre className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground text-sm overflow-x-auto">
-                    {generatedJSON}
-                  </pre>
-                  <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm">
-                    <p className="font-semibold mb-1">📝 Instructions:</p>
-                    <ol className="list-decimal list-inside space-y-1 text-xs">
-                      <li>Copy the JSON content above</li>
-                      <li>Update /public/announcement.json with this content</li>
-                      <li>Commit and push to the repository</li>
-                      <li>The announcement will appear for all users after deployment</li>
-                    </ol>
-                  </div>
-                </div>
+                {submitStatus === 'success' ? (
+                  <CheckCircle className="w-5 h-5 inline mr-2" />
+                ) : (
+                  <AlertTriangle className="w-5 h-5 inline mr-2" />
+                )}
+                {submitMessage}
               </motion.div>
             )}
           </AnimatePresence>

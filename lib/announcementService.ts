@@ -14,8 +14,8 @@ class AnnouncementService {
   private cacheDuration: number = 10000 // 10 seconds cache
 
   constructor() {
-    // Configure your Render backend URL here
-    this.backendUrl = process.env.NEXT_PUBLIC_ANNOUNCEMENT_API_URL || 'https://your-render-app.onrender.com/api/announcements'
+    // Hardcoded Render backend URL
+    this.backendUrl = 'https://portal-t795.onrender.com/api/announcements'
     this.fallbackUrl = '/announcement.json'
   }
 
