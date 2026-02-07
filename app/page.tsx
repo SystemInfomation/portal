@@ -12,10 +12,12 @@ import { WelcomeNotification } from '@/components/WelcomeNotification'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { GridBackground } from '@/components/ui/grid-background-demo'
+import { useUser } from '@/lib/userContext'
 
 export default function Home() {
   const router = useRouter()
   const [isRandomizing, setIsRandomizing] = useState(false)
+  const { userName, isLoaded } = useUser()
 
   const playRandom = () => {
     setIsRandomizing(true)
@@ -62,7 +64,7 @@ export default function Home() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30 text-primary text-sm font-semibold shadow-lg"
         >
           <Star className="w-4 h-4 animate-pulse" />
-          <span>Start your learning adventure today!</span>
+          <span>{isLoaded && userName ? `Welcome back, ${userName}!` : 'Start your learning adventure today!'}</span>
         </motion.div>
 
         <motion.div

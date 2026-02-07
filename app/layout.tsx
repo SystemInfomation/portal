@@ -11,6 +11,7 @@ import { TosNotification } from '@/components/TosNotification'
 import { TabHider } from '@/components/TabHider'
 import { TimeBasedAccessControl } from '@/components/TimeBasedAccessControl'
 import { GeoLock } from '@/components/GeoLock'
+import { UserProvider } from '@/lib/userContext'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -52,7 +53,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} min-h-screen`}>
-        <Script
+        <UserProvider>
+          <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-FGXXN9EK0N"
           strategy="afterInteractive"
         />
@@ -86,6 +88,7 @@ export default function RootLayout({
           {children}
         </main>
         {/* Analytics and SpeedInsights removed */}
+        </UserProvider>
       </body>
     </html>
   )

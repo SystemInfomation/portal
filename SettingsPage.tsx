@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './all.css';
+import { useUser } from './lib/userContext';
 
 const themes = [
   { name: 'Light', value: 'light' },
@@ -13,8 +14,10 @@ const animations = [
 ];
 
 export default function SettingsPage() {
+  const { userName, setUserName, clearUserName, isLoaded } = useUser();
   const [theme, setTheme] = useState(localStorage.getItem('celestrium-theme') || 'light');
   const [animation, setAnimation] = useState(localStorage.getItem('forsyth-animations') !== 'false');
+  const [nameInput, setNameInput] = useState(isLoaded ? (userName || '') : '');
 
   const handleThemeChange = (value: string) => {
     setTheme(value);
@@ -27,11 +30,63 @@ export default function SettingsPage() {
     localStorage.setItem('forsyth-animations', value ? 'true' : 'false');
   };
 
+  const handleNameSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setUserName(nameInput);
+  };
+
+  const handleNameClear = () => {
+    setNameInput('');
+    clearUserName();
+  };
+
   return (
     <div className="settings-page">
       <div className="settings-header glass-card">
         <h1>Settings</h1>
-        <p>Personalize your experience. Instantly modern, responsive, and epic.</p>
+        <p>{isLoaded && userName ? `Personalize your experience, ${userName}.` : 'Personalize your experience. Instantly modern, responsive, and epic.'}</p>
+      </div>
+      <div className="settings-section glass-card">
+        <h2>Personalization</h2>
+        <form onSubmit={handleNameSubmit} className="name-input-section">
+          <div className="input-group">
+            <label htmlFor="userName">Your Name (Optional)</label>
+            <div className="input-with-buttons">
+              <input
+                id="userName"
+                type="text"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                placeholder="Enter your name"
+                maxLength={50}
+              />
+              {nameInput.trim() && (
+                <button
+                  type="button"
+                  onClick={handleNameClear}
+                  className="clear-btn"
+                  title="Clear name"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="button-group">
+            <button
+              type="submit"
+              className="save-btn"
+              disabled={!nameInput.trim() || nameInput.trim() === userName}
+            >
+              Save Name
+            </button>
+          </div>
+        </form>
+        {isLoaded && userName && (
+          <div className="current-name">
+            <span>Current name: <strong>{userName}</strong></span>
+          </div>
+        )}
       </div>
       <div className="settings-section glass-card">
         <h2>Theme</h2>
