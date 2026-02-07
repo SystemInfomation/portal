@@ -30,7 +30,12 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://forsyth-county.github.io/portal/',
+  origin: [
+    'https://forsyth-county.github.io',
+    'https://forsyth-county.github.io/portal/',
+    'http://localhost:3002',
+    'http://localhost:3000'
+  ],
   credentials: false
 }));
 
