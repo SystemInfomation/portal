@@ -192,6 +192,12 @@ export default function AdminPage() {
       }
     }
     
+    // Check if API key is configured
+    const apiKeyConfigured = adminAnnouncementService.isApiKeyConfigured()
+    if (!apiKeyConfigured) {
+      console.warn('Admin API key is not configured')
+    }
+    
     loadCurrentAnnouncement()
     
     // Refresh announcement status every 30 seconds
@@ -271,6 +277,13 @@ export default function AdminPage() {
   const handleAnnouncementSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!announcement.trim()) return
+
+    // Check if API key is configured
+    if (!adminAnnouncementService.isApiKeyConfigured()) {
+      setSubmitStatus('error')
+      setSubmitMessage('Admin API key is not configured. Please check your environment variables.')
+      return
+    }
 
     setIsLoading(true)
     setSubmitStatus('idle')
@@ -465,6 +478,13 @@ export default function AdminPage() {
             : 'Backend is offline. Using static JSON fallback. Changes require manual deployment.'
           }
         </p>
+
+        {!adminAnnouncementService.isApiKeyConfigured() && (
+          <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-sm">
+            <AlertTriangle className="w-4 h-4 inline mr-2" />
+            <strong>Security Warning:</strong> Admin API key is not configured. Please set NEXT_PUBLIC_ADMIN_API_KEY in your environment variables for secure announcement management.
+          </div>
+        )}
       </motion.section>
       <motion.section
         initial={{ opacity: 0, y: 20 }}

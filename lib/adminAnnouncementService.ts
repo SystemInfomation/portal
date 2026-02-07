@@ -2,9 +2,12 @@ import { announcementService, type AnnouncementData } from './announcementServic
 
 class AdminAnnouncementService {
   private backendUrl: string
+  private apiKey: string
 
   constructor() {
     this.backendUrl = 'https://portal-t795.onrender.com/api/announcements'
+    // In production, this should be stored securely and not hardcoded
+    this.apiKey = process.env.NEXT_PUBLIC_ADMIN_API_KEY || 'your-api-key-here'
   }
 
   // Create or update announcement via backend API
@@ -14,6 +17,7 @@ class AdminAnnouncementService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-API-Key': this.apiKey,
         },
         body: JSON.stringify({
           message: message.trim(),
@@ -23,7 +27,8 @@ class AdminAnnouncementService {
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
       }
 
       const data = await response.json()
@@ -45,11 +50,16 @@ class AdminAnnouncementService {
   async disableAnnouncement(): Promise<{success: boolean, error?: string}> {
     try {
       const response = await fetch(this.backendUrl, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': this.apiKey,
+        }
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
       }
 
       const data = await response.json()
@@ -81,6 +91,11 @@ class AdminAnnouncementService {
     } catch {
       return false
     }
+  }
+
+  // Validate API key is configured
+  isApiKeyConfigured(): boolean {
+    return this.apiKey !== 'your-api-key-here' && this.apiKey.length > 0
   }
 }
 
