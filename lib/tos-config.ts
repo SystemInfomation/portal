@@ -1,7 +1,7 @@
 // Terms of Service Notification Configuration
 // Set this flag to false to completely disable the TOS notification feature
 // When disabled, no notification will appear and no related code will run
-export const ENABLE_TOS_NOTIFICATION = true;
+export const ENABLE_TOS_NOTIFICATION = false;
 
 // Configuration for the Terms of Service notification
 export const TOS_CONFIG = {
