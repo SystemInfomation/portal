@@ -10,7 +10,7 @@ import { useUser } from '@/lib/userContext';
 import { useState } from 'react';
 
 export default function SettingsPage() {
-  const { userName, setUserName, clearUserName, isLoaded } = useUser();
+  const { userName, setUserName, clearUserName, isLoaded, error, setError } = useUser();
   const [nameInput, setNameInput] = useState(isLoaded ? (userName || '') : '');
 
   const handleNameSubmit = (e: React.FormEvent) => {
@@ -21,6 +21,14 @@ export default function SettingsPage() {
   const handleNameClear = () => {
     setNameInput('');
     clearUserName();
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNameInput(e.target.value);
+    // Clear error when user starts typing
+    if (error) {
+      setError(null);
+    }
   };
 
   return (
@@ -121,10 +129,15 @@ export default function SettingsPage() {
                           id="userName"
                           type="text"
                           value={nameInput}
-                          onChange={(e) => setNameInput(e.target.value)}
+                          onChange={handleInputChange}
                           placeholder="Enter your name"
                           maxLength={50}
-                          className="flex-1 px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                          className={cn(
+                            "flex-1 px-4 py-3 rounded-xl border backdrop-blur-sm transition-all duration-200",
+                            error 
+                              ? "border-red-500 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100 placeholder-red-500 dark:placeholder-red-400 focus:ring-red-500 focus:border-red-500"
+                              : "border-slate-300 dark:border-slate-600 bg-white/70 dark:bg-slate-800/70 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:ring-blue-500 focus:border-blue-500"
+                          )}
                         />
                         {nameInput.trim() && (
                           <button
@@ -137,6 +150,14 @@ export default function SettingsPage() {
                           </button>
                         )}
                       </div>
+                      {error && (
+                        <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700">
+                          <p className="text-sm text-red-700 dark:text-red-300 flex items-center gap-2">
+                            <span className="text-red-500">⚠️</span>
+                            {error}
+                          </p>
+                        </div>
+                      )}
                       <button
                         type="submit"
                         onClick={handleNameSubmit}
