@@ -1,4 +1,4 @@
 export const config = {
-  filterInappropriateContent: true,
+  filterInappropriateContent: false,
   inappropriateContentMessage: 'This content is filtered for educational use'
 }
