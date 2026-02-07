@@ -4,14 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, X, Info, AlertTriangle, CheckCircle } from 'lucide-react'
 import { withBasePath } from '@/lib/utils'
-
-interface AnnouncementData {
-  message: string
-  type: 'info' | 'warning' | 'success'
-  timestamp: number
-  id: string
-  enabled: boolean
-}
+import { announcementService, type AnnouncementData } from '@/lib/announcementService'
 
 export function AnnouncementBanner() {
   const [announcement, setAnnouncement] = useState<AnnouncementData | null>(null)
@@ -29,20 +22,10 @@ export function AnnouncementBanner() {
   useEffect(() => {
     const checkAnnouncement = async () => {
       try {
-        // Fetch announcement from public JSON file
-        const response = await fetch(withBasePath('/announcement.json'), {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache',
-          }
-        })
+        // Use announcement service for real-time API calls with fallback
+        const data = await announcementService.checkForUpdates()
         
-        if (!response.ok) return
-        
-        const data: AnnouncementData = await response.json()
-        
-        // Only show if enabled and has content
-        if (!data.enabled || !data.message || !data.id) {
+        if (!data) {
           setIsVisible(false)
           return
         }
@@ -64,15 +47,15 @@ export function AnnouncementBanner() {
         
         return () => clearTimeout(timer)
       } catch {
-        // Ignore fetch errors
+        // Ignore fetch errors - service handles fallback
       }
     }
 
     // Check on mount
     checkAnnouncement()
     
-    // Poll for changes every 30 seconds
-    const pollInterval = setInterval(checkAnnouncement, 30000)
+    // Poll for changes every 15 seconds (more frequent for real-time)
+    const pollInterval = setInterval(checkAnnouncement, 15000)
 
     return () => {
       clearInterval(pollInterval)
