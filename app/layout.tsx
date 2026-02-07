@@ -19,15 +19,15 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Forsyth Educational Portal - Interactive Learning Platform',
-  description: 'Educational gaming portal for students - Access educational games, interactive learning tools, study resources, and collaborative educational materials',
-  keywords: 'educational, learning, students, interactive, educational games, study tools, collaborative learning, educational resources',
+  title: 'Forsyth Educational Portal - Your Gateway to Learning & Fun',
+  description: 'Discover a world of educational games, interactive learning tools, and study resources. Your fast, curated portal for safe and engaging online learning - built for students, designed for success.',
+  keywords: 'educational games, learning platform, student portal, interactive learning, study tools, educational resources, safe gaming, learning fun',
   icons: {
     icon: 'https://site.imsglobal.org/sites/default/files/orgs/logos/primary/fcslogo_hexagon.png',
   },
   openGraph: {
-    title: 'Forsyth Educational Portal',
-    description: 'Educational gaming and learning platform for students',
+    title: 'Forsyth Educational Portal - Learn & Play',
+    description: 'Your gateway to educational games and interactive learning tools. Fast, safe, and designed for student success.',
     type: 'website',
   },
   twitter: {
