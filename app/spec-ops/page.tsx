@@ -87,6 +87,8 @@ export default function AdminPage() {
   const [submitMessage, setSubmitMessage] = useState('')
   const [isBackendOnline, setIsBackendOnline] = useState<boolean | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [lastAnnouncementTime, setLastAnnouncementTime] = useState<number>(0)
+  const [rateLimitRemaining, setRateLimitRemaining] = useState<number>(0)
 
   const [sessionStartTime] = useState(Date.now())
   
@@ -117,6 +119,26 @@ export default function AdminPage() {
     const interval = setInterval(refreshMockAnalytics, 60 * 60 * 1000) // 1 hour
     return () => clearInterval(interval)
   }, [isAuthenticated])
+
+  // Update rate limit countdown every second
+  useEffect(() => {
+    if (lastAnnouncementTime === 0) return
+    
+    const updateRateLimit = () => {
+      const now = Date.now()
+      const timeSinceLastAnnouncement = now - lastAnnouncementTime
+      const remaining = Math.max(0, 60 * 1000 - timeSinceLastAnnouncement) // 1 minute in ms
+      
+      setRateLimitRemaining(remaining)
+      
+      if (remaining === 0) {
+        setLastAnnouncementTime(0)
+      }
+    }
+    
+    const interval = setInterval(updateRateLimit, 1000) // Update every second
+    return () => clearInterval(interval)
+  }, [lastAnnouncementTime])
 
   useEffect(() => {
     // Security checks
@@ -286,6 +308,16 @@ export default function AdminPage() {
     e.preventDefault()
     if (!announcement.trim()) return
 
+    // Check rate limit
+    const now = Date.now()
+    const timeSinceLastAnnouncement = now - lastAnnouncementTime
+    if (timeSinceLastAnnouncement < 60 * 1000) { // Less than 1 minute
+      setSubmitStatus('error')
+      const remainingSeconds = Math.ceil((60 * 1000 - timeSinceLastAnnouncement) / 1000)
+      setSubmitMessage(`Rate limit: Please wait ${remainingSeconds} seconds before creating another announcement.`)
+      return
+    }
+
     // Check if API key is configured
     if (!adminAnnouncementService.isApiKeyConfigured()) {
       setSubmitStatus('error')
@@ -306,6 +338,8 @@ export default function AdminPage() {
       setSubmitStatus('success')
       setSubmitMessage('Announcement broadcasted successfully! It will appear for all users in real-time.')
       setAnnouncement('')
+      setLastAnnouncementTime(now) // Set rate limit timer
+      setRateLimitRemaining(60 * 1000) // Reset countdown
       
       // Refresh current announcement
       const updated = await adminAnnouncementService.getCurrentAnnouncement()
@@ -675,13 +709,20 @@ export default function AdminPage() {
 
           <button
             type="submit"
-            disabled={!announcement.trim() || isLoading}
+            disabled={!announcement.trim() || isLoading || rateLimitRemaining > 0}
             className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
                 Broadcasting...
+              </>
+            ) : rateLimitRemaining > 0 ? (
+              <>
+                <div className="w-4 h-4 border-2 border-primary-foreground rounded-full flex items-center justify-center text-xs">
+                  {Math.ceil(rateLimitRemaining / 1000)}
+                </div>
+                Wait {Math.ceil(rateLimitRemaining / 1000)}s
               </>
             ) : (
               <>
