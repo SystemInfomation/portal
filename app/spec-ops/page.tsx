@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, Copy, Download, School, BarChart3, Users, Wifi, WifiOff } from 'lucide-react'
-import { withBasePath } from '@/lib/utils'
+import { Shield, Lock, Send, Trash2, Bell, CheckCircle, AlertTriangle, School, BarChart3, Users, Wifi, WifiOff } from 'lucide-react'
 import { SecurityUtils } from '@/lib/security'
 import { adminAnnouncementService } from '@/lib/adminAnnouncementService'
 import type { AnnouncementData } from '@/lib/announcementService'
@@ -143,33 +142,29 @@ export default function AdminPage() {
   useEffect(() => {
     // Security checks
     const performSecurityChecks = async () => {
-    // Check for secure connection (HTTPS in production) - but allow access from anywhere
-    const isSecure = typeof window !== 'undefined' && 
-      (window.location.protocol === 'https:' || window.location.hostname === 'localhost')
-    setIsSecureConnection(isSecure)
+      // Check for secure connection (HTTPS in production) - but allow access from anywhere
+      const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost'
+      setIsSecureConnection(isSecure)
 
       // Get user IP and location (client-side approximation)
-      if (typeof window !== 'undefined') {
-        // Try to get real IP using a public service (fallback to hostname)
-        try {
-          const [ipResponse, locationResponse] = await Promise.allSettled([
-            fetch('https://api.ipify.org?format=json'),
-            fetch('https://ipinfo.io/json')
-          ])
-          
-          if (ipResponse.status === 'fulfilled') {
-            const ipData = await ipResponse.value.json()
-            setUserIP(ipData.ip || 'Unknown')
-          }
-          
-          if (locationResponse.status === 'fulfilled') {
-            const locationData = await locationResponse.value.json()
-            setUserLocation(`${locationData.city}, ${locationData.country_name}` || 'Unknown')
-          }
-        } catch {
-          setUserIP(window.location.hostname)
-          setUserLocation('Unknown')
+      try {
+        const [ipResponse, locationResponse] = await Promise.allSettled([
+          fetch('https://api.ipify.org?format=json'),
+          fetch('https://ipinfo.io/json')
+        ])
+        
+        if (ipResponse.status === 'fulfilled') {
+          const ipData = await ipResponse.value.json()
+          setUserIP(ipData.ip || 'Unknown')
         }
+        
+        if (locationResponse.status === 'fulfilled') {
+          const locationData = await locationResponse.value.json()
+          setUserLocation(`${locationData.city}, ${locationData.country_name}` || 'Unknown')
+        }
+      } catch {
+        setUserIP(window.location.hostname)
+        setUserLocation('Unknown')
       }
 
       // Check lockout status

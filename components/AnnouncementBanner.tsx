@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, X, Info, AlertTriangle, CheckCircle } from 'lucide-react'
-import { withBasePath } from '@/lib/utils'
 import { announcementService, type AnnouncementData } from '@/lib/announcementService'
 
 export function AnnouncementBanner() {
