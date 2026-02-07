@@ -53,7 +53,7 @@ export default function Home() {
       >
         {/* Floating elements for visual interest */}
         <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-2xl animate-float" />
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-secondary/10 rounded-full blur-3xl animate-float [animation-delay:1s]" />
         
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -62,7 +62,7 @@ export default function Home() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/30 text-primary text-sm font-semibold shadow-lg"
         >
           <Star className="w-4 h-4 animate-pulse" />
-          <span>Join 10,000+ students learning smarter!</span>
+          <span>Start your learning adventure today!</span>
         </motion.div>
 
         <motion.div
@@ -241,8 +241,9 @@ export default function Home() {
               transition={{ delay: 1.5 + index * 0.1, duration: 0.4 }}
               onClick={() => router.push('/games')}
               className={`group glass rounded-2xl border border-border p-6 hover:border-primary/50 transition-all duration-300 hover:scale-105 hover:shadow-xl text-center`}
+              aria-label={`Browse ${category.name} games`}
             >
-              <div className={`text-4xl mb-3 group-hover:scale-110 transition-transform`}>
+              <div className={`text-4xl mb-3 group-hover:scale-110 transition-transform`} aria-hidden="true">
                 {category.emoji}
               </div>
               <h3 className="font-bold text-lg text-foreground">{category.name}</h3>

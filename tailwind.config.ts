@@ -47,6 +47,11 @@ const config: Config = {
         'slide-in': 'slide-in 0.3s ease-out',
         'fade-up': 'fade-up 0.6s ease-out',
       },
+      animationDelay: {
+        '1s': '1s',
+        '2s': '2s',
+        '3s': '3s',
+      },
       keyframes: {
         'pulse-glow': {
           '0%, 100%': { 
