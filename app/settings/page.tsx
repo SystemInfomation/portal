@@ -1,13 +1,28 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Settings as SettingsIcon, Shield } from 'lucide-react'
+import { Settings as SettingsIcon, Shield, User } from 'lucide-react'
 import { TabCloak } from '@/components/TabCloak'
 import { GameSuggestionForm } from '@/components/GameSuggestionForm'
 import { FormSuccessNotification } from '@/components/FormSuccessNotification'
 import { cn } from "@/lib/utils";
+import { useUser } from '@/lib/userContext';
+import { useState } from 'react';
 
 export default function SettingsPage() {
+  const { userName, setUserName, clearUserName, isLoaded } = useUser();
+  const [nameInput, setNameInput] = useState(isLoaded ? (userName || '') : '');
+
+  const handleNameSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setUserName(nameInput);
+  };
+
+  const handleNameClear = () => {
+    setNameInput('');
+    clearUserName();
+  };
+
   return (
     <div className="relative min-h-screen w-full bg-white dark:bg-black">
       <FormSuccessNotification />
@@ -44,7 +59,7 @@ export default function SettingsPage() {
               </h1>
             </div>
             <p className="text-slate-600 dark:text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
-              Customize your portal experience with powerful privacy and accessibility controls
+              {isLoaded && userName ? `Personalize your experience, ${userName}.` : 'Customize your portal experience with powerful privacy and accessibility controls'}
             </p>
           </motion.div>
 
@@ -54,7 +69,7 @@ export default function SettingsPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: 0.05 }}
               className="w-full"
             >
               <TabCloak />
@@ -64,55 +79,83 @@ export default function SettingsPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
               className="w-full"
             >
               <GameSuggestionForm />
             </motion.div>
 
-            {/* Privacy Section */}
+            {/* Personalization Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
               className="w-full"
             >
-              <section className="relative overflow-hidden rounded-3xl bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl hover:shadow-blue-500/10 transition-all duration-500">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600/10 via-purple-600/5 to-pink-600/10 backdrop-blur-xl border border-blue-500/20 dark:border-blue-400/30 shadow-2xl hover:shadow-blue-500/20 transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 opacity-50" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
                 
-                <div className="relative p-8 lg:p-10 space-y-6">
+                <div className="relative p-8 lg:p-10 scale-105">
                   {/* Section Header */}
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30">
-                      <Shield className="w-6 h-6 text-green-400" />
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-blue-500/40 shadow-lg">
+                      <User className="w-6 h-6 text-blue-300" />
                     </div>
                     <div>
-                      <h2 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">Privacy & Safety</h2>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Your privacy is our priority</p>
+                      <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Personalization</h2>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">Customize your experience</p>
                     </div>
                   </div>
                   
-                  {/* Privacy Content */}
-                  <div className="space-y-4">
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                      We prioritize your privacy and safety. This portal:
-                    </p>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {[
-                        { icon: "🔒", text: "Does not collect any personal data" },
-                        { icon: "🚫", text: "Does not use tracking cookies" },
-                        { icon: "🛡️", text: "Does not share information with third parties" },
-                        { icon: "💻", text: "All games run locally in your browser" }
-                      ].map((item, index) => (
-                        <div key={index} className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/30 border border-slate-200/50 dark:border-slate-700/30">
-                          <span className="text-xl mt-0.5">{item.icon}</span>
-                          <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
-                            <span className="font-semibold text-slate-900 dark:text-white">Not</span> {item.text.replace("Does not", "").replace("All games", "Games")}
-                          </p>
-                        </div>
-                      ))}
+                  {/* Personalization Controls */}
+                  <div className="max-w-md mx-auto">
+                    {/* Name Input */}
+                    <div className="space-y-4">
+                      <label htmlFor="userName" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Your Name
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          id="userName"
+                          type="text"
+                          value={nameInput}
+                          onChange={(e) => setNameInput(e.target.value)}
+                          placeholder="Enter your name"
+                          maxLength={50}
+                          className="flex-1 px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        />
+                        {nameInput.trim() && (
+                          <button
+                            type="button"
+                            onClick={handleNameClear}
+                            className="px-3 py-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-500 border border-red-500/30 hover:border-red-500/40 transition-all duration-200"
+                            title="Clear name"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <button
+                        type="submit"
+                        onClick={handleNameSubmit}
+                        disabled={!nameInput.trim() || nameInput.trim() === userName}
+                        className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
+                      >
+                        Save Name
+                      </button>
                     </div>
                   </div>
+                  
+                  {/* Current Status */}
+                  {(isLoaded && userName) && (
+                    <div className="mt-6 p-4 rounded-xl bg-blue-100/50 dark:bg-blue-900/30 border border-blue-300/50 dark:border-blue-700/50 backdrop-blur-sm">
+                      <p className="text-sm text-blue-700 dark:text-blue-300">
+                        Welcome, <span className="font-semibold">{userName}</span>!
+                      </p>
+                    </div>
+                  )}
                 </div>
               </section>
             </motion.div>
