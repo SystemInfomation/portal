@@ -8,12 +8,19 @@ import { GameCard } from '@/components/GameCard'
 import { GridBackground } from '@/components/ui/grid-background-demo'
 import { config } from '@/config/games'
 
+// Popular games that should be shown first
+const popularGames = [
+  '1v1lol', '10-minutes-till-dawn', 'bloons-tower-defense-5', 'fruit-ninja',
+  'plants-vs-zombies', 'among-us', 'eaglercraft', 'monkey-mart', 'temple-run-2',
+  'subway-surfers', 'crossy-road', 'geometry-dash', 'minecraft', 'retro-bowl'
+]
+
 export default function GamesPage() {
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Group games by category
-  const categorizedGames = useMemo(() => {
-    const filtered = games.filter(game => {
+  // Filter games based on search and appropriateness
+  const filteredGames = useMemo(() => {
+    return games.filter(game => {
       const matchesSearch = 
         game.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         game.category.toLowerCase().includes(searchQuery.toLowerCase())
@@ -22,9 +29,19 @@ export default function GamesPage() {
       
       return matchesSearch && matchesAppropriateness
     })
+  }, [searchQuery])
 
+  // Get popular games
+  const popularGamesList = useMemo(() => {
+    return filteredGames.filter(game => popularGames.includes(game.id))
+  }, [filteredGames])
+
+  // Group remaining games by category
+  const categorizedGames = useMemo(() => {
+    const remainingGames = filteredGames.filter(game => !popularGames.includes(game.id))
+    
     const grouped: Record<string, typeof games> = {}
-    filtered.forEach(game => {
+    remainingGames.forEach(game => {
       if (!grouped[game.category]) {
         grouped[game.category] = []
       }
@@ -32,9 +49,9 @@ export default function GamesPage() {
     })
 
     return grouped
-  }, [searchQuery])
+  }, [filteredGames])
 
-  const totalGames = Object.values(categorizedGames).reduce((sum, games) => sum + games.length, 0)
+  const totalGames = filteredGames.length
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -77,7 +94,7 @@ export default function GamesPage() {
         </div>
       </motion.div>
 
-      {/* Games Grid by Category */}
+      {/* Games Grid */}
       {totalGames === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -88,38 +105,89 @@ export default function GamesPage() {
           <p className="text-muted-foreground mt-2">Try a different search term</p>
         </motion.div>
       ) : (
-        <div className="space-y-12">
-          {Object.entries(categorizedGames)
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([category, categoryGames], categoryIndex) => (
-              <motion.section
-                key={category}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + categoryIndex * 0.1 }}
-                className="space-y-6"
-              >
-                <h2 className="text-2xl md:text-3xl font-bold text-primary tracking-wider">
-                  {category}
-                  <span className="ml-3 text-sm text-muted-foreground font-normal">
-                    ({categoryGames.length})
-                  </span>
+        <div className="space-y-16">
+          {/* Popular Games Section */}
+          {popularGamesList.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="space-y-6"
+            >
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl md:text-4xl font-bold text-gradient">
+                  We may think you like this
                 </h2>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {categoryGames.map((game, index) => (
-                    <motion.div
-                      key={game.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.05 * index }}
-                    >
-                      <GameCard game={game} className="w-full" />
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.section>
-            ))}
+                <p className="text-muted-foreground text-lg">
+                  Popular games that everyone enjoys
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {popularGamesList.map((game, index) => (
+                  <motion.div
+                    key={game.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.05 * index }}
+                  >
+                    <GameCard game={game} className="w-full" />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
+
+          {/* Categories Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="space-y-6"
+          >
+            <div className="text-center space-y-2">
+              <h2 className="text-3xl md:text-4xl font-bold text-gradient">
+                Categories
+              </h2>
+              <p className="text-muted-foreground text-lg">
+                Browse games by category
+              </p>
+            </div>
+
+            <div className="space-y-12">
+              {Object.entries(categorizedGames)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([category, categoryGames], categoryIndex) => (
+                  <motion.div
+                    key={category}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + categoryIndex * 0.1 }}
+                    className="space-y-6"
+                  >
+                    <h3 className="text-2xl md:text-3xl font-bold text-primary tracking-wider">
+                      {category}
+                      <span className="ml-3 text-sm text-muted-foreground font-normal">
+                        ({categoryGames.length})
+                      </span>
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {categoryGames.map((game, index) => (
+                        <motion.div
+                          key={game.id}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.05 * index }}
+                        >
+                          <GameCard game={game} className="w-full" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+            </div>
+          </motion.section>
         </div>
       )}
     </div>
