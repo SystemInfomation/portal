@@ -31,7 +31,7 @@ exports.generalLimit = createRateLimit(
 
 exports.adminLimit = createRateLimit(
   60 * 1000, // 1 minute
-  5, // 5 admin actions per minute
+  20, // 20 admin actions per minute
   'Too many admin actions, please slow down.'
 );
 
