@@ -38,7 +38,7 @@ export default function Home() {
   ]
 
   return (
-    <div className="max-w-7xl mx-auto space-y-20">
+    <div className="max-w-7xl mx-auto space-y-8">
       <GridBackground />
       <WelcomeNotification />
       <BookmarkNotification />
@@ -49,7 +49,7 @@ export default function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center space-y-8 py-12 relative"
+        className="text-center space-y-8 py-4 relative"
       >
         {/* Floating elements for visual interest */}
         <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-2xl animate-float" />
@@ -132,7 +132,7 @@ export default function Home() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8, duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-8"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-4"
       >
         {[
           { icon: Zap, title: 'Lightning Fast', description: 'No loading screens. No delays. Just pure fun.', color: 'from-yellow-400 to-orange-500' },
@@ -161,7 +161,7 @@ export default function Home() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.0, duration: 0.6 }}
-        className="space-y-8 py-12"
+        className="space-y-8 py-4"
       >
         <div className="text-center space-y-4">
           <motion.div
@@ -215,7 +215,7 @@ export default function Home() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4, duration: 0.6 }}
-        className="space-y-8 py-12"
+        className="space-y-8 py-4"
       >
         <div className="text-center space-y-2">
           <h2 className="text-4xl md:text-5xl font-bold">
@@ -258,7 +258,7 @@ export default function Home() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.6, duration: 0.6 }}
-        className="space-y-8 py-12"
+        className="space-y-8 py-4"
       >
         <div className="text-center space-y-2">
           <h2 className="text-4xl md:text-5xl font-bold">
