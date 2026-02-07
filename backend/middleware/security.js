@@ -24,8 +24,8 @@ const createRateLimit = (windowMs, max, message) => {
 
 // Different rate limits for different endpoints
 exports.generalLimit = createRateLimit(
-  15 * 60 * 1000, // 15 minutes
-  100, // 100 requests per 15 minutes
+  1 * 60 * 1000, // 15 minutes
+  10000, // 100 requests per 15 minutes
   'Too many requests from this IP, please try again later.'
 );
 
