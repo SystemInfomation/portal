@@ -5,7 +5,6 @@ import { Settings as SettingsIcon, Shield } from 'lucide-react'
 import { TabCloak } from '@/components/TabCloak'
 import { GameSuggestionForm } from '@/components/GameSuggestionForm'
 import { FormSuccessNotification } from '@/components/FormSuccessNotification'
-import { TimeRestrictionToggle } from '@/components/TimeRestrictionToggle'
 import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
@@ -61,21 +60,11 @@ export default function SettingsPage() {
               <TabCloak />
             </motion.div>
 
-            {/* Time Restriction Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="w-full"
-            >
-              <TimeRestrictionToggle />
-            </motion.div>
-
             {/* Game Suggestions Section */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.2 }}
               className="w-full"
             >
               <GameSuggestionForm />
@@ -85,7 +74,7 @@ export default function SettingsPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.3 }}
               className="w-full"
             >
               <section className="relative overflow-hidden rounded-3xl bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl hover:shadow-blue-500/10 transition-all duration-500">

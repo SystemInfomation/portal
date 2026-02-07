@@ -7,6 +7,18 @@ import { createSolidColorFavicon, CLOAK_OPTIONS } from '@/lib/tabCloakUtils'
 
 const CLOAK_COOLDOWN_MS = 3000 // 3 seconds
 
+// Helper function for fallback emojis
+const getFallbackEmoji = (id: string): string => {
+  switch (id) {
+    case 'google-drive': return '📁'
+    case 'canvas': return '🎨'
+    case 'classlink': return '🎓'
+    case 'linewize': return '🛡️'
+    case 'infinite-campus': return '🏫'
+    default: return '🌐'
+  }
+}
+
 // Helper to remove all cloak classes from body
 const removeCloakClasses = () => {
   CLOAK_OPTIONS.forEach(option => {
@@ -130,30 +142,42 @@ export function TabCloak() {
 
         {/* Preset Cards - Horizontal Scroll */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white"> </h3>
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Choose Your Theme</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Default Option */}
             <button
               onClick={() => applyCloak('none')}
               disabled={cooldownRemaining > 0}
-              className={`flex-shrink-0 w-48 p-4 rounded-2xl border-2 transition-all duration-300 text-left group ${
+              className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300 text-left group ${
                 selectedCloak === 'none'
-                  ? 'border-blue-500 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 shadow-lg shadow-blue-500/20'
-                  : 'border-slate-300/50 dark:border-slate-600/50 hover:border-blue-500/50 hover:bg-slate-100/50 dark:hover:bg-slate-700/30'
+                  ? 'border-blue-500 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 shadow-lg shadow-blue-500/20 scale-105'
+                  : 'border-slate-300/50 dark:border-slate-600/50 hover:border-blue-500/50 hover:bg-slate-100/50 dark:hover:bg-slate-700/30 hover:scale-102'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              <div className="space-y-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Globe className="w-7 h-7 text-blue-400" />
+              {/* Background Preview */}
+              <div className="h-24 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 relative">
+                <div className="absolute inset-0 opacity-30" style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 20 0 L 0 0 0 20' fill='none' stroke='rgba(0,0,0,0.05)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)' /%3E%3C/svg%3E")`
+                }} />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Globe className="w-8 h-8 text-blue-500 opacity-50" />
                 </div>
-                <div>
-                  <div className="font-bold text-slate-900 dark:text-white">Default</div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">Forsyth Portal</div>
+              </div>
+              
+              <div className="p-4 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-bold text-slate-900 dark:text-white">Default</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400">Forsyth Portal</div>
+                  </div>
                 </div>
                 {selectedCloak === 'none' && (
-                  <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-                    <div className="w-2 h-2 rounded-full bg-blue-500" />
-                    <span>Active</span>
+                  <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-500/10 rounded-lg px-2 py-1">
+                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                    <span>Currently Active</span>
                   </div>
                 )}
               </div>
@@ -165,25 +189,65 @@ export function TabCloak() {
                 key={option.id}
                 onClick={() => applyCloak(option.id)}
                 disabled={cooldownRemaining > 0}
-                className={`flex-shrink-0 w-48 p-4 rounded-2xl border-2 transition-all duration-300 text-left group ${
+                className={`relative overflow-hidden rounded-2xl border-2 transition-all duration-300 text-left group ${
                   selectedCloak === option.id
-                    ? 'border-blue-500 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 shadow-lg shadow-blue-500/20'
-                    : 'border-slate-300/50 dark:border-slate-600/50 hover:border-blue-500/50 hover:bg-slate-100/50 dark:hover:bg-slate-700/30'
+                    ? 'border-blue-500 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 shadow-lg shadow-blue-500/20 scale-105'
+                    : 'border-slate-300/50 dark:border-slate-600/50 hover:border-blue-500/50 hover:bg-slate-100/50 dark:hover:bg-slate-700/30 hover:scale-102'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
-                <div className="space-y-3">
-                  <div 
-                    className="w-12 h-12 rounded-xl group-hover:scale-110 transition-transform border border-slate-300/30"
-                    style={{ backgroundColor: option.bgColor }}
-                  />
-                  <div>
-                    <div className="font-bold text-slate-900 dark:text-white">{option.name}</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400 mt-1 truncate">{option.title}</div>
+                {/* Enhanced Background Preview */}
+                <div 
+                  className="h-24 relative transition-transform duration-300 group-hover:scale-105"
+                  style={{ backgroundColor: option.bgColor }}
+                >
+                  {/* Add subtle pattern overlay */}
+                  <div className="absolute inset-0 opacity-50" style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 20 0 L 0 0 0 20' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)' /%3E%3C/svg%3E")`
+                  }} />
+                  
+                  {/* Theme Logo Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 p-2">
+                      {option.logoUrl ? (
+                        <img 
+                          src={option.logoUrl} 
+                          alt={`${option.name} logo`}
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            // Fallback to emoji if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent) {
+                              parent.innerHTML = getFallbackEmoji(option.id);
+                            }
+                          }}
+                        />
+                      ) : (
+                        <div className="text-2xl">{getFallbackEmoji(option.id)}</div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Color indicator */}
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full border-2 border-white/30 shadow-lg" style={{ backgroundColor: option.bgColor }} />
+                </div>
+                
+                <div className="p-4 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="w-10 h-10 rounded-xl border-2 border-white/20 shadow-md transition-transform group-hover:scale-110"
+                      style={{ backgroundColor: option.bgColor }}
+                    />
+                    <div className="flex-1">
+                      <div className="font-bold text-slate-900 dark:text-white">{option.name}</div>
+                      <div className="text-xs text-slate-600 dark:text-slate-400 truncate">{option.title}</div>
+                    </div>
                   </div>
                   {selectedCloak === option.id && (
-                    <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-                      <div className="w-2 h-2 rounded-full bg-blue-500" />
-                      <span>Active</span>
+                    <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-500/10 rounded-lg px-2 py-1">
+                      <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                      <span>Currently Active</span>
                     </div>
                   )}
                 </div>

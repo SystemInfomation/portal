@@ -163,12 +163,7 @@ export function GameSuggestionForm() {
                 required
                 rows={6}
                 className="w-full px-6 py-4 bg-slate-50/80 dark:bg-slate-800/50 border border-slate-300/50 dark:border-slate-600/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500/50 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 transition-all duration-300 resize-none text-base leading-relaxed"
-                placeholder="Share details about the game you'd like us to add...
-
-• Game name and description
-• Why you think it would be a great addition
-• Any links or where we can find it
-• What makes it fun or educational"
+                placeholder="Share details about the game you'd like us to add..."
                 disabled={isSubmitting}
               />
               <div className="absolute bottom-4 right-4 text-xs text-slate-500 dark:text-slate-400">
