@@ -6,8 +6,8 @@ class AdminAnnouncementService {
 
   constructor() {
     this.backendUrl = 'https://portal-t795.onrender.com/api/announcements'
-    // In production, this should be stored securely and not hardcoded
-    this.apiKey = process.env.NEXT_PUBLIC_ADMIN_API_KEY || 'your-api-key-here'
+    // API key for secure admin operations
+    this.apiKey = process.env.NEXT_PUBLIC_ADMIN_API_KEY || '9f3c7a2b8d4e6c1a0b5f9e'
   }
 
   // Create or update announcement via backend API
@@ -95,7 +95,7 @@ class AdminAnnouncementService {
 
   // Validate API key is configured
   isApiKeyConfigured(): boolean {
-    return this.apiKey !== 'your-api-key-here' && this.apiKey.length > 0
+    return Boolean(this.apiKey && this.apiKey.length > 0 && this.apiKey !== 'your-api-key-here')
   }
 }
 
