@@ -63,7 +63,15 @@ const generateSchoolVisitors = (totalVisitors: number) => {
 
 // Generate fluctuating visitor count between 100-500
 const generateVisitorCount = () => {
-  return Math.floor(Math.random() * 401) + 100 // 100-500
+  const baseCount = Math.floor(Math.random() * 401) + 100 // 100-500
+  
+  // Reduce players on weekends (30% fewer)
+  const isWeekend = new Date().getDay() === 0 || new Date().getDay() === 6 // Sunday = 0, Saturday = 6
+  if (isWeekend) {
+    return Math.floor(baseCount * 0.7) // 30% reduction
+  }
+  
+  return baseCount
 }
 
 
@@ -95,7 +103,7 @@ export default function AdminPage() {
   const [schoolBreakdown, setSchoolBreakdown] = useState(generateSchoolVisitors(generateVisitorCount()))
   const [lastUpdated, setLastUpdated] = useState(new Date())
 
-  // Update mock analytics every 30 seconds for realistic fluctuation
+  // Update mock analytics every hour for realistic fluctuation
   useEffect(() => {
     if (!isAuthenticated) return
     
@@ -106,7 +114,7 @@ export default function AdminPage() {
       setLastUpdated(new Date())
     }
     
-    const interval = setInterval(refreshMockAnalytics, 30000)
+    const interval = setInterval(refreshMockAnalytics, 60 * 60 * 1000) // 1 hour
     return () => clearInterval(interval)
   }, [isAuthenticated])
 
@@ -566,7 +574,7 @@ export default function AdminPage() {
         </div>
 
         <p className="text-xs text-muted-foreground text-center italic">
-          * Analytics data is refresed every 30 seconds.
+          * Analytics data is refreshed every hour. Weekend traffic shows reduced player counts.
         </p>
       </motion.section>
 
